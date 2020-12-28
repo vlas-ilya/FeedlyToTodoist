@@ -72,8 +72,8 @@ const addArticles = async (articles) => {
 }
 
 const run = async () => {
-	//const articles = await loadArticles();
-	//await addArticles(articles);
+	const articles = await loadArticles();
+	await addArticles(articles);
 	//await markAsUnsaved(articles);
 }
 
