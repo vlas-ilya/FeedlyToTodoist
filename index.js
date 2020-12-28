@@ -10,14 +10,6 @@ const countOnDay = Number(process.env.countOnDay);
 const todoistToken = process.env.todoistToken;
 const todoistProjectId = Number(process.env.todoistProjectId);
 
-
-console.log(feedlyStreamName);
-console.log(feedlyToken);
-console.log(countOnDay);
-console.log(todoistToken);
-console.log(todoistProjectId);
-
-
 const loadArticles = async () => {
 	const data = await fetch(`https://cloud.feedly.com/v3/streams/${feedlyStreamName}/contents?count=${7 * countOnDay}`).get({
 		headers: {
