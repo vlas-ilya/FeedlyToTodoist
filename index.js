@@ -2,6 +2,7 @@ const { v4: uuidv4 } = require('uuid');
 const dotenv = require('dotenv');
 const fetch = require('./src/utils/fetch');
 
+
 dotenv.config();
 
 const feedlyStreamName = process.env.feedlyStreamName;
