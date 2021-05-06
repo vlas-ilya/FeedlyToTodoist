@@ -70,4 +70,9 @@ const run = async () => {
 	await markAsUnsaved(articles);
 }
 
-run().then(() => console.log(), e => console.log(e)); 
+
+run()
+	.then(() => { })
+	.catch(t => {
+		throw t;
+	}); 
