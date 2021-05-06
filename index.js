@@ -19,14 +19,14 @@ const loadArticles = async () => {
 	});
 
 	return data.data.items.map(item => ({
-		id: item.id,
-		url: item.originId,
-		title: item.title,
+		id: item['id'],
+		url: item['originId'],
+		title: item['title'],
 	}));
 }
 
 const markAsUnsaved = async articles => {
-	const data = await fetch(`https://cloud.feedly.com/v3/markers`).post({
+	const ignored = await fetch(`https://cloud.feedly.com/v3/markers`).post({
 		data: {
 			action: "markAsUnsaved",
 			type: "entries",
