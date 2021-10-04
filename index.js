@@ -2,7 +2,6 @@ const { v4: uuidv4 } = require('uuid');
 const dotenv = require('dotenv');
 const fetch = require('./src/utils/fetch');
 
-
 dotenv.config();
 
 const feedlyStreamName = process.env.feedlyStreamName;
@@ -11,8 +10,15 @@ const countOnDay = Number(process.env.countOnDay);
 const todoistToken = process.env.todoistToken;
 const todoistProjectId = Number(process.env.todoistProjectId);
 
-const loadArticles = async () => {
-	const data = await fetch(`https://cloud.feedly.com/v3/streams/${feedlyStreamName}/contents?count=${7 * countOnDay}`).get({
+const run = async () => {
+	const articles = await loadArticlesFromFeedly();
+	await addArticlesToTodoist(articles);
+	await markAsUnsavedInFeedly(articles);
+}
+
+const loadArticlesFromFeedly = async () => {
+	const url = `https://cloud.feedly.com/v3/streams/${feedlyStreamName}/contents?count=${7 * countOnDay}`
+	const data = await fetch(url).get({
 		headers: {
 			"Authorization": `OAuth ${feedlyToken}`
 		}
@@ -25,17 +31,19 @@ const loadArticles = async () => {
 	}));
 }
 
-const markAsUnsaved = async articles => {
-	const ignored = await fetch(`https://cloud.feedly.com/v3/markers`).post({
-		data: {
-			action: "markAsUnsaved",
-			type: "entries",
-			entryIds: articles.map(item => item.id), 
-		},
-		headers: {
-			"Authorization": `OAuth ${feedlyToken}`
-		}
-	});
+const addArticlesToTodoist = async (articles) => {
+	const realCountOnDay = Math.min(Math.ceil(articles.length / 7), countOnDay);
+	for (let i = 0; i < Math.min(7 * realCountOnDay, articles.length); i++) {
+		articles[i].date = getDate(i / realCountOnDay);
+		await addToTodoist(articles[i]);
+	}
+}
+
+const getDate = (addDay) => {
+	const day = Math.floor(addDay);
+	const date = new Date();
+	date.setDate(date.getDate() + day);
+	return date.toISOString().substring(0, 10);
 }
 
 const addToTodoist = async article => {
@@ -53,26 +61,22 @@ const addToTodoist = async article => {
 	});
 }
 
-const addArticles = async (articles) => {
-	for (let i = 0; i < Math.min(7 * countOnDay, articles.length); i++) {
-		const day = Math.floor(i / countOnDay);
-		const date = new Date();
-		date.setDate(date.getDate() + day);
-
-		articles[i].date = date.toISOString().substring(0, 10);
-		await addToTodoist(articles[i]);
-	}
+const markAsUnsavedInFeedly = async articles => {
+	const ignored = await fetch(`https://cloud.feedly.com/v3/markers`).post({
+		data: {
+			action: "markAsUnsaved",
+			type: "entries",
+			entryIds: articles.map(item => item.id),
+		},
+		headers: {
+			"Authorization": `OAuth ${feedlyToken}`
+		}
+	});
 }
 
-const run = async () => {
-	const articles = await loadArticles();
-	await addArticles(articles);
-	await markAsUnsaved(articles);
-}
-
-
+// Main
 run()
 	.then(() => { })
 	.catch(t => {
 		throw t;
-	}); 
+	});
