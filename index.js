@@ -56,7 +56,7 @@ const addToTodoist = async article => {
 		data: {
 			project_id: todoistProjectId,
 			due_date: article.date,
-			content: `${article.url} (${article.title})`
+			content: `[${article.title}](${article.url})`
 		}
 	});
 }
