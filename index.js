@@ -32,6 +32,7 @@ const loadArticlesFromFeedly = async () => {
 }
 
 const addArticlesToTodoist = async (articles) => {
+	articles.sort(() => Math.random() - 0.5);
 	const realCountOnDay = Math.min(Math.ceil(articles.length / 7), countOnDay);
 	for (let i = 0; i < Math.min(7 * realCountOnDay, articles.length); i++) {
 		articles[i].date = getDate(i / realCountOnDay);
