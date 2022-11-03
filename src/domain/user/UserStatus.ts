@@ -1,0 +1,6 @@
+export type UserStatus =
+  | 'INIT'
+  | 'SET_FEEDLY_TOKEN'
+  | 'SET_FEEDLY_STREAM_NAME'
+  | 'SET_TODOIST_TOKEN'
+  | 'SET_TODOIST_PROJECT_ID';
