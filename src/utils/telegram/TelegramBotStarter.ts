@@ -76,6 +76,22 @@ async function createBot() {
 
     // @ts-ignore
     const commands = config.onCommand.filter(command => command.command == ctx.message.text);
+
+    if (commands.length == 0) {
+      await Promise.all(
+        config.onMessage.map(async (method) => {
+          config.botControllerProviders.forEach((provider) => {
+            const controller = config.starter.prototype[provider]();
+            const context = controller.getContext();
+            if (controller[method] && controller[method]._onMessage) {
+              controller[method].bind(context)(ctx);
+            }
+          });
+        }),
+      );
+      return;
+    }
+
     await Promise.all(
       commands.map(async (command) => {
         config.botControllerProviders.forEach((provider) => {
