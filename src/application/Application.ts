@@ -9,8 +9,9 @@ import { UserDao } from '../infrastructure-interfaces/dao/UserDao';
 import { EventDispatcher } from '../infrastructure-interfaces/events/EventDispatcher';
 import { LinkDaoImpl } from '../infrastructure/dao/LinkDaoImpl';
 import { LinkDao } from '../infrastructure-interfaces/dao/LinkDao';
-import { NotesTransferService } from '../infrastructure-interfaces/network/NotesTransferService';
-import { NotesTransferServiceImpl } from '../infrastructure/network/NotesTransferServiceImpl';
+import { NotesTransferService } from '../infrastructure-interfaces/services/NotesTransferService';
+import { NotesTransferServiceImpl } from '../infrastructure/services/NotesTransferServiceImpl';
+const { v4: uuidv4 } = require('uuid');
 import {
   TelegramApiToken,
   TelegramBotControllerProvider,
@@ -30,6 +31,16 @@ import { getOrThrowIfEmpty } from '../utils/errors';
 import { EventHandlerIsNotDeclaredError } from '../infrastructure-interfaces/events/error/EventHandlerIsNotDeclaredError';
 import { CronJobControllerProvider, CronStarter } from '../utils/cron/CronStarter';
 import { CronController } from './controllers/CronController';
+import { FeedlyClientImpl } from '../infrastructure/network/FeedlyClientImpl';
+import { FeedlyClient } from '../infrastructure-interfaces/network/FeedlyClient';
+import { TodoistClient } from '../infrastructure-interfaces/network/TodoistClient';
+import { TodoistClientImpl } from '../infrastructure/network/TodoistClientImpl';
+import { TitleLoader } from '../infrastructure-interfaces/network/TitleLoader';
+import { TitleLoaderImpl } from '../infrastructure/network/TitleLoaderImpl';
+import { IdProvider } from '../utils/providers/IdProvider';
+import { fetch, Fetch } from '../utils/fetch';
+import { DateProvider } from '../utils/providers/DateProvider';
+import { RandomProvider } from '../utils/providers/RandomProvider';
 
 @Context()
 @TelegramBotStarter()
@@ -44,7 +55,7 @@ export class Application {
   @Entity()
   @TelegramBotControllerProvider()
   public telegramController(): TelegramController {
-    return new TelegramController(this.userService());
+    return new TelegramController(this.userService(), this.dateGenerator());
   }
 
   @Entity()
@@ -99,6 +110,59 @@ export class Application {
 
   @Entity()
   private notesTransferService(): NotesTransferService {
-    return new NotesTransferServiceImpl(this.userService());
+    return new NotesTransferServiceImpl(
+      this.userService(),
+      this.feedlyClient(),
+      this.todoistClient(),
+      this.titleLoader(),
+      this.idGenerator(),
+    );
+  }
+
+  @Entity()
+  private feedlyClient(): FeedlyClient {
+    return new FeedlyClientImpl(this.fetch());
+  }
+
+  @Entity()
+  private todoistClient(): TodoistClient {
+    return new TodoistClientImpl(this.idGenerator(), this.dateGenerator(), this.randomGenerator(), this.fetch());
+  }
+
+  @Entity()
+  private titleLoader(): TitleLoader {
+    return new TitleLoaderImpl(this.fetch());
+  }
+
+  @Entity()
+  private idGenerator(): IdProvider {
+    return {
+      generate(): string {
+        return uuidv4();
+      },
+    };
+  }
+
+  @Entity()
+  private dateGenerator(): DateProvider {
+    return {
+      generate(): Date {
+        return new Date();
+      },
+    };
+  }
+
+  @Entity()
+  private randomGenerator(): RandomProvider {
+    return {
+      shuffle<T>(list: T[]) {
+        list.sort(() => Math.random() - 0.5);
+      },
+    };
+  }
+
+  @Entity()
+  private fetch(): Fetch {
+    return fetch;
   }
 }

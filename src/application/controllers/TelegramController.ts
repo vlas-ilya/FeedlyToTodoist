@@ -7,10 +7,11 @@ import {
   SET_TODOIST_TOKEN,
 } from '../../constants/commands';
 import { UserService } from '../../infrastructure-interfaces/services/UserService';
+import { DateProvider } from '../../utils/providers/DateProvider';
 
 @TelegramBotController()
 export class TelegramController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService, private readonly dateGenerator: DateProvider) {}
 
   @OnStart()
   async onStart(ctx: any) {
@@ -44,6 +45,8 @@ export class TelegramController {
 
   @OnMessage()
   async someCommand(ctx: any) {
-    await this.userService.run(ctx.message.chat.id, async (user) => user.setValue(ctx.message.text));
+    await this.userService.run(ctx.message.chat.id, async (user) =>
+      user.setValue(ctx.message.text, this.dateGenerator),
+    );
   }
 }

@@ -1,5 +1,6 @@
 import { BaseValueObject } from '../../../utils/domain/BaseValueObject';
 import { ValueIsNotUrlError } from '../errors/ValueIsNotUrlError';
+import { DateProvider } from '../../../utils/providers/DateProvider';
 
 export class Link extends BaseValueObject {
   public static readonly extractLinksRegex =
@@ -29,7 +30,7 @@ export class Link extends BaseValueObject {
     return this.value == link.value && this.date?.getDate() == link.date?.getDate();
   }
 
-  public static convertToLinks(value: string): Link[] {
-    return [...value.matchAll(Link.extractLinksRegex)].map((value) => new Link(value[0], new Date()));
+  public static convertToLinks(value: string, dateGenerator: DateProvider): Link[] {
+    return [...value.matchAll(Link.extractLinksRegex)].map((value) => new Link(value[0], dateGenerator.generate()));
   }
 }

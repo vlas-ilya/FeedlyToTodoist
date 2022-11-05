@@ -1,9 +1,9 @@
 import { EventHandler } from '../../../infrastructure-interfaces/events/handlers/EventHandler';
 import { TransferUserLinksEvent } from '../../../domain/user/events/TransferUserLinksEvent';
-import { NotesTransferService } from '../../../infrastructure-interfaces/network/NotesTransferService';
-import { IncorrectFeedlyCredentialsError } from '../../network/error/IncorrectFeedlyCredentialsError';
-import { IncorrectTodoistCredentialsError } from '../../network/error/IncorrectTodoistCredentialsError';
-import { UnknownError } from '../../network/error/UnknownError';
+import { NotesTransferService } from '../../../infrastructure-interfaces/services/NotesTransferService';
+import { IncorrectFeedlyCredentialsError } from '../../../infrastructure-interfaces/network/error/IncorrectFeedlyCredentialsError';
+import { IncorrectTodoistCredentialsError } from '../../../infrastructure-interfaces/network/error/IncorrectTodoistCredentialsError';
+import { UnknownError } from '../../../infrastructure-interfaces/network/error/UnknownError';
 import { TelegramClient } from '../../../utils/telegram/TelegramBotStarter';
 import {
   INCORRECT_FEEDLY_CREDENTIALS,
@@ -18,24 +18,8 @@ export class TransferUserLinksEventHandler implements EventHandler<TransferUserL
   ) {}
 
   async handle(event: TransferUserLinksEvent) {
-    if (
-      !event.userInfo.feedlyStreamName ||
-      !event.userInfo.feedlyToken ||
-      !event.userInfo.todoistToken ||
-      !event.userInfo.todoistProjectId
-    ) {
-      return;
-    }
-
     try {
-      await this.notesTransferService.transfer(
-        event.userId.value,
-        event.userInfo.feedlyStreamName,
-        event.userInfo.feedlyToken,
-        event.userInfo.todoistToken,
-        event.userInfo.todoistProjectId,
-        event.links.links,
-      );
+      await this.notesTransferService.transfer(event.userId.value, event.userInfo, event.links);
     } catch (e) {
       if (e instanceof IncorrectFeedlyCredentialsError) {
         await this.telegramClient.send(e.userId, INCORRECT_FEEDLY_CREDENTIALS);

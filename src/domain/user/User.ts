@@ -18,6 +18,7 @@ import {
   SET_TODOIST_TOKEN_RESPONSE,
   YOU_CAN_START_RESPONSE,
 } from '../../constants/responses';
+import { DateProvider } from '../../utils/providers/DateProvider';
 
 export class User extends BaseEntity<UserId> {
   constructor(userId: UserId, private userInfo: UserInfo, private links: Links) {
@@ -48,10 +49,10 @@ export class User extends BaseEntity<UserId> {
     this.addEvent(new ReplayToUserEvent(this.id, SET_TODOIST_PROJECT_ID_RESPONSE));
   }
 
-  public setValue(value: string) {
+  public setValue(value: string, dateGenerator: DateProvider) {
     switch (this.userInfo.userStatus) {
       case 'INIT':
-        this.links.addLinks(Link.convertToLinks(value));
+        this.links.addLinks(Link.convertToLinks(value, dateGenerator));
         this.addEvent(new UserLinksWasUpdatedEvent(this.id, this.links));
         break;
       case 'SET_FEEDLY_TOKEN':
