@@ -142,7 +142,7 @@ export function OnCommand(command: string, description: string): MethodDecorator
   return function (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
     target[propertyKey]._onCommand = true;
     config.onCommand.push({
-      command,
+      command: `/${command}`,
       description,
       method: propertyKey,
     });

@@ -1,6 +1,6 @@
 import { BaseValueObject } from './BaseValueObject';
 
-export class Id extends BaseValueObject {
+export class BaseId extends BaseValueObject {
   constructor(public readonly value: string) {
     super();
   }
@@ -9,10 +9,10 @@ export class Id extends BaseValueObject {
     if (!object) {
       return false;
     }
-    if (object! instanceof Id) {
+    if (object! instanceof BaseId) {
       return false;
     }
-    const id = object as Id;
+    const id = object as BaseId;
     return this.value == id.value;
   }
 }

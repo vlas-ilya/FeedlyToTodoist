@@ -1,7 +1,7 @@
 import { BaseEvent } from '../../../utils/domain/BaseEvent';
-import { UserInfo } from '../UserInfo';
-import { Links } from '../Links';
-import { UserId } from '../UserId';
+import { UserInfo } from '../vo/UserInfo';
+import { Links } from '../vo/Links';
+import { UserId } from '../vo/UserId';
 import { EventCode } from '../../../constants/EventCode';
 
 export class TransferUserLinksEvent extends BaseEvent {

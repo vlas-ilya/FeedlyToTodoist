@@ -1,18 +1,23 @@
 import { BaseEntity } from '../../utils/domain/BaseEntity';
-import { UserId } from './UserId';
+import { UserId } from './vo/UserId';
 import { UserInfoWasUpdatedEvent } from './events/UserInfoWasUpdatedEvent';
-import { UserInfo } from './UserInfo';
+import { UserInfo } from './vo/UserInfo';
 import { ReplayToUserEvent } from './events/ReplayToUserEvent';
-import {
-  SET_FEEDLY_STREAM_NAME,
-  SET_FEEDLY_TOKEN,
-  SET_TODOIST_PROJECT_ID,
-  SET_TODOIST_TOKEN,
-} from '../../constants/commands';
-import { Links } from './Links';
+import { Links } from './vo/Links';
 import { UserLinksWasUpdatedEvent } from './events/UserLinksWasUpdatedEvent';
 import { TransferUserLinksEvent } from './events/TransferUserLinksEvent';
-import { Link } from './Link';
+import { Link } from './vo/Link';
+import {
+  SET_FEEDLY_STREAM_NAME_BY_COMMAND_RESPONSE,
+  SET_FEEDLY_STREAM_NAME_RESPONSE,
+  SET_FEEDLY_TOKEN_BY_COMMAND_RESPONSE,
+  SET_FEEDLY_TOKEN_RESPONSE,
+  SET_TODOIST_PROJECT_ID_BY_COMMAND_RESPONSE,
+  SET_TODOIST_PROJECT_ID_RESPONSE,
+  SET_TODOIST_TOKEN_BY_COMMAND_RESPONSE,
+  SET_TODOIST_TOKEN_RESPONSE,
+  YOU_CAN_START_RESPONSE,
+} from '../../constants/responses';
 
 export class User extends BaseEntity<UserId> {
   constructor(userId: UserId, private userInfo: UserInfo, private links: Links) {
@@ -22,25 +27,25 @@ export class User extends BaseEntity<UserId> {
   public changeFeedlyToken() {
     this.userInfo.userStatus = 'SET_FEEDLY_TOKEN';
     this.addEvent(new UserInfoWasUpdatedEvent(this.id, this.userInfo));
-    this.addEvent(new ReplayToUserEvent(this.id, 'Установите API токен для Feedly'));
+    this.addEvent(new ReplayToUserEvent(this.id, SET_FEEDLY_TOKEN_RESPONSE));
   }
 
   public changeFeedlyStreamName() {
     this.userInfo.userStatus = 'SET_FEEDLY_STREAM_NAME';
     this.addEvent(new UserInfoWasUpdatedEvent(this.id, this.userInfo));
-    this.addEvent(new ReplayToUserEvent(this.id, 'Установите stream для Feedly'));
+    this.addEvent(new ReplayToUserEvent(this.id, SET_FEEDLY_STREAM_NAME_RESPONSE));
   }
 
   public changeTodoistToken() {
     this.userInfo.userStatus = 'SET_TODOIST_TOKEN';
     this.addEvent(new UserInfoWasUpdatedEvent(this.id, this.userInfo));
-    this.addEvent(new ReplayToUserEvent(this.id, 'Установите API токен для Todoist'));
+    this.addEvent(new ReplayToUserEvent(this.id, SET_TODOIST_TOKEN_RESPONSE));
   }
 
   public changeTodoistProjectId() {
     this.userInfo.userStatus = 'SET_TODOIST_PROJECT_ID';
     this.addEvent(new UserInfoWasUpdatedEvent(this.id, this.userInfo));
-    this.addEvent(new ReplayToUserEvent(this.id, 'Установите ID проекта для Todoist'));
+    this.addEvent(new ReplayToUserEvent(this.id, SET_TODOIST_PROJECT_ID_RESPONSE));
   }
 
   public setValue(value: string) {
@@ -70,23 +75,21 @@ export class User extends BaseEntity<UserId> {
   private checkConfigFields() {
     const emptyFields = [];
     if (!this.userInfo.feedlyToken) {
-      emptyFields.push(`Установите API токен для Feedly командой /${SET_FEEDLY_TOKEN}`);
+      emptyFields.push(SET_FEEDLY_TOKEN_BY_COMMAND_RESPONSE);
     }
     if (!this.userInfo.feedlyStreamName) {
-      emptyFields.push(`Установите stream для Feedly командой /${SET_FEEDLY_STREAM_NAME}`);
+      emptyFields.push(SET_FEEDLY_STREAM_NAME_BY_COMMAND_RESPONSE);
     }
     if (!this.userInfo.todoistToken) {
-      emptyFields.push(`Установите API токен для Todoist командой /${SET_TODOIST_TOKEN}`);
+      emptyFields.push(SET_TODOIST_TOKEN_BY_COMMAND_RESPONSE);
     }
     if (!this.userInfo.todoistProjectId) {
-      emptyFields.push(`Установите ID проекта для Todoist командой /${SET_TODOIST_PROJECT_ID}`);
+      emptyFields.push(SET_TODOIST_PROJECT_ID_BY_COMMAND_RESPONSE);
     }
     if (emptyFields.length > 0) {
       this.addEvent(new ReplayToUserEvent(this.id, emptyFields.join(', ')));
     } else if (this.userInfo.userStatus != 'INIT') {
-      emptyFields.push(
-        `Теперь вы можете отправлять ссылки в бот и они автоматически по понедельникам будут отправляться вам в Todoist, как и ссылки из Feedly (Read Later)`,
-      );
+      emptyFields.push(YOU_CAN_START_RESPONSE);
       this.addEvent(new ReplayToUserEvent(this.id, emptyFields.join(', ')));
     }
   }

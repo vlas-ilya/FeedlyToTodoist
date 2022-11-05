@@ -1,5 +1,24 @@
-export const SET_FEEDLY_TOKEN = 'set_feedly_token';
-export const SET_FEEDLY_STREAM_NAME = 'set_feedly_stream_name';
-export const SET_TODOIST_TOKEN = 'set_todoist_token';
-export const SET_TODOIST_PROJECT_ID = 'set_todoist_project_id';
-export const RERUN_ARTICLES_TRANSFER = 'rerun_articles_transfer';
+export const SET_FEEDLY_TOKEN = {
+  command: 'set_feedly_token',
+  description: 'Установить API токен для Feedly',
+};
+
+export const SET_FEEDLY_STREAM_NAME = {
+  command: 'set_feedly_stream_name',
+  description: 'Установить stream для Feedly',
+};
+
+export const SET_TODOIST_PROJECT_ID = {
+  command: 'set_todoist_project_id',
+  description: 'Установить API токен для Todoist',
+};
+
+export const SET_TODOIST_TOKEN = {
+  command: 'set_todoist_token',
+  description: 'Установить ID проекта для Todoist',
+};
+
+export const RERUN_ARTICLES_TRANSFER = {
+  command: 'rerun_articles_transfer',
+  description: 'Запустить перенос ссылок вручную',
+};

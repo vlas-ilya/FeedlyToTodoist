@@ -1,12 +1,12 @@
 import { Context, Entity } from '../utils/context/Context';
-import { UserServiceImpl } from '../infrastructure/service/UserServiceImpl';
+import { UserServiceImpl } from '../infrastructure/services/UserServiceImpl';
 import { UserRepositoryImpl } from '../repository/UserRepositoryImpl';
-import { EventDispatcherImpl } from '../infrastructure/event/EventDispatcherImpl';
+import { EventDispatcherImpl } from '../infrastructure/events/EventDispatcherImpl';
 import { UserDaoImpl } from '../infrastructure/dao/UserDaoImpl';
-import { UserService } from '../infrastructure-interfaces/service/UserService';
+import { UserService } from '../infrastructure-interfaces/services/UserService';
 import { UserRepository } from '../repository-interfaces/UserRepository';
 import { UserDao } from '../infrastructure-interfaces/dao/UserDao';
-import { EventDispatcher } from '../infrastructure-interfaces/event/EventDispatcher';
+import { EventDispatcher } from '../infrastructure-interfaces/events/EventDispatcher';
 import { LinkDaoImpl } from '../infrastructure/dao/LinkDaoImpl';
 import { LinkDao } from '../infrastructure-interfaces/dao/LinkDao';
 import { NotesTransferService } from '../infrastructure-interfaces/network/NotesTransferService';
@@ -20,14 +20,14 @@ import {
 } from '../utils/telegram/TelegramBotStarter';
 import { TelegramController } from './controllers/TelegramController';
 import { BaseEvent } from '../utils/domain/BaseEvent';
-import { EventHandler } from '../infrastructure-interfaces/event/handlers/EventHandler';
+import { EventHandler } from '../infrastructure-interfaces/events/handlers/EventHandler';
 import { EventCode } from '../constants/EventCode';
-import { UserInfoWasUpdatedEventHandler } from '../infrastructure/event/handlers/UserInfoWasUpdatedEventHandler';
-import { ReplayToUserEventHandler } from '../infrastructure/event/handlers/ReplayToUserEventHandler';
-import { UserLinksWasUpdatedEventHandler } from '../infrastructure/event/handlers/UserLinksWasUpdatedEventHandler';
-import { TransferUserLinksEventHandler } from '../infrastructure/event/handlers/TransferUserLinksEventHandler';
+import { UserInfoWasUpdatedEventHandler } from '../infrastructure/events/handlers/UserInfoWasUpdatedEventHandler';
+import { ReplayToUserEventHandler } from '../infrastructure/events/handlers/ReplayToUserEventHandler';
+import { UserLinksWasUpdatedEventHandler } from '../infrastructure/events/handlers/UserLinksWasUpdatedEventHandler';
+import { TransferUserLinksEventHandler } from '../infrastructure/events/handlers/TransferUserLinksEventHandler';
 import { getOrThrowIfEmpty } from '../utils/errors';
-import { EventHandlerIsNotDeclaredError } from '../infrastructure-interfaces/event/error/EventHandlerIsNotDeclaredError';
+import { EventHandlerIsNotDeclaredError } from '../infrastructure-interfaces/events/error/EventHandlerIsNotDeclaredError';
 import { CronJobControllerProvider, CronStarter } from '../utils/cron/CronStarter';
 import { CronController } from './controllers/CronController';
 

@@ -1,10 +1,15 @@
-import { EventHandler } from '../../../infrastructure-interfaces/event/handlers/EventHandler';
+import { EventHandler } from '../../../infrastructure-interfaces/events/handlers/EventHandler';
 import { TransferUserLinksEvent } from '../../../domain/user/events/TransferUserLinksEvent';
 import { NotesTransferService } from '../../../infrastructure-interfaces/network/NotesTransferService';
 import { IncorrectFeedlyCredentialsError } from '../../network/error/IncorrectFeedlyCredentialsError';
 import { IncorrectTodoistCredentialsError } from '../../network/error/IncorrectTodoistCredentialsError';
 import { UnknownError } from '../../network/error/UnknownError';
 import { TelegramClient } from '../../../utils/telegram/TelegramBotStarter';
+import {
+  INCORRECT_FEEDLY_CREDENTIALS,
+  INCORRECT_TODOIST_CREDENTIALS,
+  UNKNOWN_ERROR,
+} from '../../../constants/responses';
 
 export class TransferUserLinksEventHandler implements EventHandler<TransferUserLinksEvent> {
   constructor(
@@ -33,11 +38,11 @@ export class TransferUserLinksEventHandler implements EventHandler<TransferUserL
       );
     } catch (e) {
       if (e instanceof IncorrectFeedlyCredentialsError) {
-        await this.telegramClient.send(e.userId, 'Указаны некорректные данные для Feedly');
+        await this.telegramClient.send(e.userId, INCORRECT_FEEDLY_CREDENTIALS);
       } else if (e instanceof IncorrectTodoistCredentialsError) {
-        await this.telegramClient.send(e.userId, 'Указаны некорректные данные для Todoist');
+        await this.telegramClient.send(e.userId, INCORRECT_TODOIST_CREDENTIALS);
       } else if (e instanceof UnknownError) {
-        await this.telegramClient.send(e.userId, 'Произошла неизвестная ошибка');
+        await this.telegramClient.send(e.userId, UNKNOWN_ERROR);
       }
     }
   }

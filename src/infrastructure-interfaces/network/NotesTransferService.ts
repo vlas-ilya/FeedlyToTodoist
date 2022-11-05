@@ -1,4 +1,4 @@
-import { Link } from '../../domain/user/Link';
+import { Link } from '../../domain/user/vo/Link';
 
 export interface NotesTransferService {
   transfer(

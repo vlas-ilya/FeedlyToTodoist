@@ -1,4 +1,4 @@
-import { EventHandler } from '../../../infrastructure-interfaces/event/handlers/EventHandler';
+import { EventHandler } from '../../../infrastructure-interfaces/events/handlers/EventHandler';
 import { ReplayToUserEvent } from '../../../domain/user/events/ReplayToUserEvent';
 import { TelegramClient } from '../../../utils/telegram/TelegramBotStarter';
 

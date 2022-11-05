@@ -1,6 +1,6 @@
-import { EventDispatcher } from '../../infrastructure-interfaces/event/EventDispatcher';
+import { EventDispatcher } from '../../infrastructure-interfaces/events/EventDispatcher';
 import { BaseEvent } from '../../utils/domain/BaseEvent';
-import { EventHandler } from '../../infrastructure-interfaces/event/handlers/EventHandler';
+import { EventHandler } from '../../infrastructure-interfaces/events/handlers/EventHandler';
 
 export class EventDispatcherImpl implements EventDispatcher {
   constructor(private readonly eventHandlerProvider: <E extends BaseEvent>(event: E) => EventHandler<E>) {}

@@ -1,5 +1,5 @@
 import { Job, CronJobController } from '../../utils/cron/CronStarter';
-import { UserService } from '../../infrastructure-interfaces/service/UserService';
+import { UserService } from '../../infrastructure-interfaces/services/UserService';
 
 @CronJobController()
 export class CronController {

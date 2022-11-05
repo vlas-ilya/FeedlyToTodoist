@@ -1,4 +1,4 @@
-import { EventHandler } from '../../../infrastructure-interfaces/event/handlers/EventHandler';
+import { EventHandler } from '../../../infrastructure-interfaces/events/handlers/EventHandler';
 import { UserInfoWasUpdatedEvent } from '../../../domain/user/events/UserInfoWasUpdatedEvent';
 import { UserDao } from '../../../infrastructure-interfaces/dao/UserDao';
 import { UserDto } from '../../../infrastructure-interfaces/dao/dto/UserDto';

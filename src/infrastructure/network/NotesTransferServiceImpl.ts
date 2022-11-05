@@ -1,8 +1,8 @@
 import { NotesTransferService } from '../../infrastructure-interfaces/network/NotesTransferService';
 const { v4: uuidv4 } = require('uuid');
 import { fetch } from '../../utils/fetch';
-import { UserService } from '../../infrastructure-interfaces/service/UserService';
-import { Link } from '../../domain/user/Link';
+import { UserService } from '../../infrastructure-interfaces/services/UserService';
+import { Link } from '../../domain/user/vo/Link';
 import { IncorrectFeedlyCredentialsError } from './error/IncorrectFeedlyCredentialsError';
 import { UnknownError } from './error/UnknownError';
 import { IncorrectTodoistCredentialsError } from './error/IncorrectTodoistCredentialsError';

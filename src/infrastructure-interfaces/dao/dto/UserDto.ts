@@ -1,5 +1,5 @@
-import { UserStatus } from '../../../domain/user/UserStatus';
-import { UserInfo } from '../../../domain/user/UserInfo';
+import { UserStatus } from '../../../domain/user/vo/UserStatus';
+import { UserInfo } from '../../../domain/user/vo/UserInfo';
 
 export class UserDto {
   feedlyStreamName?: string;
@@ -16,6 +16,16 @@ export class UserDto {
     userDto.todoistProjectId = userInfo.todoistProjectId;
     userDto.userStatus = userInfo.userStatus;
     return userDto;
+  }
+
+  toEntity(): UserInfo {
+    return new UserInfo(
+      this.feedlyStreamName,
+      this.feedlyToken,
+      this.todoistToken,
+      this.todoistProjectId,
+      UserDto.toUserStatus(this.userStatus),
+    )
   }
 
   static toUserStatus(userStatus?: string): UserStatus {

@@ -1,15 +1,15 @@
-import { BaseValueObject } from '../../utils/domain/BaseValueObject';
-import { ValueIsNotUrlError } from './error/ValueIsNotUrlError';
+import { BaseValueObject } from '../../../utils/domain/BaseValueObject';
+import { ValueIsNotUrlError } from '../errors/ValueIsNotUrlError';
 
 export class Link extends BaseValueObject {
-  public static readonly linksRegex =
+  public static readonly extractLinksRegex =
     /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g;
-  public static readonly linkRegex =
+  public static readonly checkLinkRegex =
     /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;
 
-  constructor(public readonly value: string) {
+  constructor(public readonly value: string, public readonly date: Date) {
     super();
-    const regex = new RegExp(Link.linkRegex);
+    const regex = new RegExp(Link.checkLinkRegex);
     if (!value.match(regex)) {
       throw new ValueIsNotUrlError(value);
     }
@@ -26,10 +26,10 @@ export class Link extends BaseValueObject {
 
     const link = object as Link;
 
-    return this.value == link.value;
+    return this.value == link.value && this.date?.getDate() == link.date?.getDate();
   }
 
   public static convertToLinks(value: string): Link[] {
-    return [...value.matchAll(Link.linksRegex)].map((value) => new Link(value[0]));
+    return [...value.matchAll(Link.extractLinksRegex)].map((value) => new Link(value[0], new Date()));
   }
 }

@@ -1,5 +1,5 @@
-import { BaseValueObject } from '../../utils/domain/BaseValueObject';
-import { arrayEquals } from '../../utils/arrayEquals';
+import { BaseValueObject } from '../../../utils/domain/BaseValueObject';
+import { arrayEquals } from '../../../utils/arrayEquals';
 import { Link } from './Link';
 
 export class Links extends BaseValueObject {

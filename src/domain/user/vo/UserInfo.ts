@@ -1,4 +1,4 @@
-import { BaseValueObject } from '../../utils/domain/BaseValueObject';
+import { BaseValueObject } from '../../../utils/domain/BaseValueObject';
 import { UserStatus } from './UserStatus';
 
 export class UserInfo extends BaseValueObject {

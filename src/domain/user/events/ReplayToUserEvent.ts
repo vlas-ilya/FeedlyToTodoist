@@ -1,5 +1,5 @@
 import { BaseEvent } from '../../../utils/domain/BaseEvent';
-import { UserId } from '../UserId';
+import { UserId } from '../vo/UserId';
 import {EventCode} from "../../../constants/EventCode";
 
 export class ReplayToUserEvent extends BaseEvent {

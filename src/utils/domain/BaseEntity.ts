@@ -1,7 +1,7 @@
-import { Id } from './Id';
+import { BaseId } from './BaseId';
 import { BaseEvent } from './BaseEvent';
 
-export abstract class BaseEntity<ID extends Id> {
+export abstract class BaseEntity<ID extends BaseId> {
   private _events: BaseEvent[] = [];
 
   protected constructor(public readonly id: ID) {}
