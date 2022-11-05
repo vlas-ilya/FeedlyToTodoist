@@ -1,3 +1,5 @@
+import { EventCode } from '../../constants/EventCode';
+
 export abstract class BaseEvent {
   readonly eventCode: EventCode;
 
@@ -5,9 +7,3 @@ export abstract class BaseEvent {
     this.eventCode = eventCode;
   }
 }
-
-export type EventCode =
-  | 'UserInfoWasUpdatedEvent'
-  | 'ReplayToUserEvent'
-  | 'UserLinksWasUpdatedEvent'
-  | 'TransferUserLinksEvent';

@@ -1,4 +1,4 @@
-import { BaseEntity } from '../base/BaseEntity';
+import { BaseEntity } from '../../utils/domain/BaseEntity';
 import { UserId } from './UserId';
 import { UserInfoWasUpdatedEvent } from './events/UserInfoWasUpdatedEvent';
 import { UserInfo } from './UserInfo';
@@ -8,7 +8,7 @@ import {
   SET_FEEDLY_TOKEN,
   SET_TODOIST_PROJECT_ID,
   SET_TODOIST_TOKEN,
-} from '../../utils/commands';
+} from '../../constants/commands';
 import { Links } from './Links';
 import { UserLinksWasUpdatedEvent } from './events/UserLinksWasUpdatedEvent';
 import { TransferUserLinksEvent } from './events/TransferUserLinksEvent';

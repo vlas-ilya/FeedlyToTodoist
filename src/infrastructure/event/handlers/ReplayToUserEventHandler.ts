@@ -1,6 +1,6 @@
 import { EventHandler } from '../../../infrastructure-interfaces/event/handlers/EventHandler';
 import { ReplayToUserEvent } from '../../../domain/user/events/ReplayToUserEvent';
-import { TelegramClient } from '../../../infrastructure-interfaces/network/TelegramClient';
+import { TelegramClient } from '../../../utils/telegram/TelegramBotStarter';
 
 export class ReplayToUserEventHandler implements EventHandler<ReplayToUserEvent> {
   constructor(private readonly telegramClient: TelegramClient) {}

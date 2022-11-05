@@ -1,4 +1,4 @@
-import { BaseValueObject } from '../base/BaseValueObject';
+import { BaseValueObject } from '../../utils/domain/BaseValueObject';
 import { arrayEquals } from '../../utils/arrayEquals';
 import { Link } from './Link';
 

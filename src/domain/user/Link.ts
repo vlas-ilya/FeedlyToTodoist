@@ -1,4 +1,4 @@
-import { BaseValueObject } from '../base/BaseValueObject';
+import { BaseValueObject } from '../../utils/domain/BaseValueObject';
 import { ValueIsNotUrlError } from './error/ValueIsNotUrlError';
 
 export class Link extends BaseValueObject {

@@ -1,6 +1,6 @@
-import { Error } from './Error';
+import { BaseError } from './domain/BaseError';
 
-export function getOrThrowIfEmpty<T>(obj: T, err: Error): T {
+export function getOrThrowIfEmpty<T>(obj: T, err: BaseError): T {
   if (!obj) {
     throw err;
   }

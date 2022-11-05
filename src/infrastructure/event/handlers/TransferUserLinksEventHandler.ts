@@ -4,7 +4,7 @@ import { NotesTransferService } from '../../../infrastructure-interfaces/network
 import { IncorrectFeedlyCredentialsError } from '../../network/error/IncorrectFeedlyCredentialsError';
 import { IncorrectTodoistCredentialsError } from '../../network/error/IncorrectTodoistCredentialsError';
 import { UnknownError } from '../../network/error/UnknownError';
-import { TelegramClient } from '../../../infrastructure-interfaces/network/TelegramClient';
+import { TelegramClient } from '../../../utils/telegram/TelegramBotStarter';
 
 export class TransferUserLinksEventHandler implements EventHandler<TransferUserLinksEvent> {
   constructor(

@@ -1,8 +1,8 @@
-import { Error } from '../../../utils/Error';
-import { BaseEvent } from '../../../domain/base/BaseEvent';
+import { BaseEvent } from '../../../utils/domain/BaseEvent';
+import { BaseError } from '../../../utils/domain/BaseError';
 
-export class EventHandlerIsNotDeclaredError extends Error {
-  constructor(event: BaseEvent) {
+export class EventHandlerIsNotDeclaredError extends BaseError {
+  constructor(public readonly event: BaseEvent) {
     super();
   }
 }

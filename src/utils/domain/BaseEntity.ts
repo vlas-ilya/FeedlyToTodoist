@@ -4,7 +4,7 @@ import { BaseEvent } from './BaseEvent';
 export abstract class BaseEntity<ID extends Id> {
   private _events: BaseEvent[] = [];
 
-  constructor(public readonly id: ID) {}
+  protected constructor(public readonly id: ID) {}
 
   protected addEvent(event: BaseEvent) {
     this._events.push(event);
