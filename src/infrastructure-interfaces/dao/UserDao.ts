@@ -1,8 +1,8 @@
-import { UserDto } from './dto/UserDto';
+import { UserInfoDto } from './dto/UserInfoDto';
 
 export interface UserDao {
-  findById(value: string): Promise<UserDto>;
-  create(value: string): Promise<void>;
-  saveUserInfo(value: string, userInfo: UserDto): Promise<void>;
+  findById(id: string): Promise<UserInfoDto>;
+  create(id: string): Promise<void>;
+  saveUserInfo(id: string, userInfoDto: UserInfoDto): Promise<void>;
   listIds(): Promise<string[]>;
 }

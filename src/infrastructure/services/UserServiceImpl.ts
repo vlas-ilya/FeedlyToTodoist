@@ -5,6 +5,7 @@ import { UserId } from '../../domain/user/vo/UserId';
 import { EventDispatcher } from '../../infrastructure-interfaces/events/EventDispatcher';
 import { UserInfo } from '../../domain/user/vo/UserInfo';
 import { Links } from '../../domain/user/vo/Links';
+import { TransferringStatus } from '../../domain/user/vo/TransferringStatus';
 
 export class UserServiceImpl implements UserService {
   constructor(private readonly userRepository: UserRepository, private readonly eventDispatcher: EventDispatcher) {}
@@ -16,7 +17,7 @@ export class UserServiceImpl implements UserService {
   }
 
   async createUser(id: string): Promise<void> {
-    const user = new User(new UserId(id), new UserInfo(), new Links([]));
+    const user = new User(new UserId(id), UserInfo.empty(), Links.empty(), TransferringStatus.empty());
     user.create();
     await this.userRepository.createEmptyUser(new UserId(id));
     await this.eventDispatcher.dispatch(...user.events());

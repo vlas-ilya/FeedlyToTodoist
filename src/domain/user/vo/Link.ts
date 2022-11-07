@@ -16,20 +16,6 @@ export class Link extends BaseValueObject {
     }
   }
 
-  equals(object: BaseValueObject): boolean {
-    if (!object) {
-      return false;
-    }
-
-    if (object! instanceof Link) {
-      return false;
-    }
-
-    const link = object as Link;
-
-    return this.value == link.value && this.date?.getDate() == link.date?.getDate();
-  }
-
   public static convertToLinks(value: string, dateGenerator: DateProvider): Link[] {
     return [...value.matchAll(Link.extractLinksRegex)].map((value) => new Link(value[0], dateGenerator.generate()));
   }

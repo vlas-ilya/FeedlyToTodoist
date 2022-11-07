@@ -1,20 +1,22 @@
 import { UserStatus } from '../../../domain/user/vo/UserStatus';
 import { UserInfo } from '../../../domain/user/vo/UserInfo';
 
-export class UserDto {
+export class UserInfoDto {
   feedlyStreamName?: string;
   feedlyToken?: string;
   todoistToken?: string;
   todoistProjectId?: string;
   userStatus?: string;
+  dailyPlan?: number;
 
-  static fromEntity(userInfo: UserInfo): UserDto {
-    const userDto = new UserDto();
+  static fromEntity(userInfo: UserInfo): UserInfoDto {
+    const userDto = new UserInfoDto();
     userDto.feedlyStreamName = userInfo.feedlyStreamName;
     userDto.feedlyToken = userInfo.feedlyToken;
     userDto.todoistToken = userInfo.todoistToken;
     userDto.todoistProjectId = userInfo.todoistProjectId;
     userDto.userStatus = userInfo.userStatus;
+    userDto.dailyPlan = userInfo.dailyPlan;
     return userDto;
   }
 
@@ -24,8 +26,9 @@ export class UserDto {
       this.feedlyToken,
       this.todoistToken,
       this.todoistProjectId,
-      UserDto.toUserStatus(this.userStatus),
-    )
+      this.dailyPlan,
+      UserInfoDto.toUserStatus(this.userStatus),
+    );
   }
 
   static toUserStatus(userStatus?: string): UserStatus {
@@ -38,6 +41,8 @@ export class UserDto {
         return 'SET_TODOIST_TOKEN';
       case 'SET_TODOIST_PROJECT_ID':
         return 'SET_TODOIST_PROJECT_ID';
+      case 'SET_DAILY_PLAN':
+        return 'SET_DAILY_PLAN';
       case 'INIT':
       default:
         return 'INIT';

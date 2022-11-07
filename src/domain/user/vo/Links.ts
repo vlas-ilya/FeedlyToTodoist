@@ -1,5 +1,4 @@
 import { BaseValueObject } from '../../../utils/domain/BaseValueObject';
-import { arrayEquals } from '../../../utils/arrayEquals';
 import { Link } from './Link';
 
 export class Links extends BaseValueObject {
@@ -7,18 +6,8 @@ export class Links extends BaseValueObject {
     super();
   }
 
-  equals(object: BaseValueObject): boolean {
-    if (!object) {
-      return false;
-    }
-
-    if (object! instanceof Links) {
-      return false;
-    }
-
-    const links = object as Links;
-
-    return arrayEquals(this.links, links.links);
+  static empty(): Links {
+    return new Links([]);
   }
 
   addLinks(value: Link[]) {

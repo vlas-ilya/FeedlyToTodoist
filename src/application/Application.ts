@@ -41,6 +41,9 @@ import { IdProvider } from '../utils/providers/IdProvider';
 import { fetch, Fetch } from '../utils/fetch';
 import { DateProvider } from '../utils/providers/DateProvider';
 import { RandomProvider } from '../utils/providers/RandomProvider';
+import { TransferringStatusWasUpdatedEventHandler } from '../infrastructure/events/handlers/TransferringStatusWasUpdatedEventHandler';
+import { TransferringStatusDao } from '../infrastructure-interfaces/dao/TransferringStatusDao';
+import { TransferringStatusDaoImpl } from '../infrastructure/dao/TransferringStatusDaoImpl';
 
 @Context()
 @TelegramBotStarter()
@@ -77,7 +80,7 @@ export class Application {
 
   @Entity()
   private userRepository(): UserRepository {
-    return new UserRepositoryImpl(this.userDao(), this.linkDao());
+    return new UserRepositoryImpl(this.userDao(), this.linkDao(), this.transferringStatusDao());
   }
 
   @Entity()
@@ -91,13 +94,20 @@ export class Application {
   }
 
   @Entity()
+  private transferringStatusDao(): TransferringStatusDao {
+    return new TransferringStatusDaoImpl();
+  }
+
+  @Entity()
   private eventDispatcher(): EventDispatcher {
     const handlers = {
       UserInfoWasUpdatedEvent: () => new UserInfoWasUpdatedEventHandler(this.userDao()),
       ReplayToUserEvent: () => new ReplayToUserEventHandler(this.telegramClient()),
       UserLinksWasUpdatedEvent: () => new UserLinksWasUpdatedEventHandler(this.linkDao()),
       TransferUserLinksEvent: () =>
-        new TransferUserLinksEventHandler(this.notesTransferService(), this.telegramClient()),
+        new TransferUserLinksEventHandler(this.userService(), this.notesTransferService(), this.telegramClient()),
+      TransferringStatusWasUpdatedEvent: () =>
+        new TransferringStatusWasUpdatedEventHandler(this.transferringStatusDao()),
     } as {
       [key in EventCode]: () => EventHandler<any>;
     };

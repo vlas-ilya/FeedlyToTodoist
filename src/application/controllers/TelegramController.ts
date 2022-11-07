@@ -1,10 +1,12 @@
 import { OnCommand, OnMessage, OnStart, TelegramBotController } from '../../utils/telegram/TelegramBotStarter';
 import {
   RERUN_ARTICLES_TRANSFER,
+  SET_DAILY_PLAN,
   SET_FEEDLY_STREAM_NAME,
   SET_FEEDLY_TOKEN,
   SET_TODOIST_PROJECT_ID,
   SET_TODOIST_TOKEN,
+  STATUS,
 } from '../../constants/commands';
 import { UserService } from '../../infrastructure-interfaces/services/UserService';
 import { DateProvider } from '../../utils/providers/DateProvider';
@@ -38,9 +40,19 @@ export class TelegramController {
     await this.userService.run(ctx.message.chat.id, async (user) => user.changeTodoistProjectId());
   }
 
+  @OnCommand(SET_DAILY_PLAN.command, SET_DAILY_PLAN.description)
+  async setDailyPlan(ctx: any) {
+    await this.userService.run(ctx.message.chat.id, async (user) => user.setDailyPlan());
+  }
+
   @OnCommand(RERUN_ARTICLES_TRANSFER.command, RERUN_ARTICLES_TRANSFER.description)
   async transferLinks(ctx: any) {
     await this.userService.run(ctx.message.chat.id, async (user) => user.transferLinks());
+  }
+
+  @OnCommand(STATUS.command, STATUS.description)
+  async showStatus(ctx: any) {
+    await this.userService.run(ctx.message.chat.id, async (user) => user.showStatus());
   }
 
   @OnMessage()

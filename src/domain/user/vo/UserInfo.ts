@@ -1,31 +1,20 @@
 import { BaseValueObject } from '../../../utils/domain/BaseValueObject';
 import { UserStatus } from './UserStatus';
+import { Maybe } from '../../../utils/types/Maybe';
 
 export class UserInfo extends BaseValueObject {
   constructor(
-    public feedlyStreamName?: string,
-    public feedlyToken?: string,
-    public todoistToken?: string,
-    public todoistProjectId?: string,
-    public userStatus: UserStatus = 'INIT',
+    public feedlyStreamName: Maybe<string>,
+    public feedlyToken: Maybe<string>,
+    public todoistToken: Maybe<string>,
+    public todoistProjectId: Maybe<string>,
+    public dailyPlan: Maybe<number>,
+    public userStatus: Maybe<UserStatus>,
   ) {
     super();
   }
 
-  equals(object: BaseValueObject) {
-    if (!object) {
-      return false;
-    }
-    if (object! instanceof UserInfo) {
-      return false;
-    }
-    const userIndo = object as UserInfo;
-    return (
-      this.feedlyStreamName == userIndo.feedlyStreamName &&
-      this.feedlyToken == userIndo.feedlyToken &&
-      this.todoistToken == userIndo.todoistToken &&
-      this.todoistProjectId == userIndo.todoistProjectId &&
-      this.userStatus == userIndo.userStatus
-    );
+  static empty(): UserInfo {
+    return new UserInfo(undefined, undefined, undefined, undefined, undefined, 'INIT');
   }
 }

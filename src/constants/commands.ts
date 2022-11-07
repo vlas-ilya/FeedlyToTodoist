@@ -22,3 +22,13 @@ export const RERUN_ARTICLES_TRANSFER = {
   command: 'rerun_articles_transfer',
   description: 'Запустить перенос ссылок вручную',
 };
+
+export const SET_DAILY_PLAN = {
+  command: 'set_daily_plan',
+  description: 'Установить количество задач на день',
+};
+
+export const STATUS = {
+  command: 'status',
+  description: 'Получить статус',
+};

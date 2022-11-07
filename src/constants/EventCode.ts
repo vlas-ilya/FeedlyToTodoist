@@ -2,4 +2,5 @@ export type EventCode =
   | 'UserInfoWasUpdatedEvent'
   | 'ReplayToUserEvent'
   | 'UserLinksWasUpdatedEvent'
-  | 'TransferUserLinksEvent';
+  | 'TransferUserLinksEvent'
+  | 'TransferringStatusWasUpdatedEvent';

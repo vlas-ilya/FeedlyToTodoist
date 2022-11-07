@@ -11,6 +11,7 @@ import { Article } from '../../infrastructure-interfaces/network/entities/Articl
 import { UserInfo } from '../../domain/user/vo/UserInfo';
 import { Links } from '../../domain/user/vo/Links';
 import { IdProvider } from '../../utils/providers/IdProvider';
+import { DEFAULT_DAILY_PLAN } from '../../constants/common';
 
 export class NotesTransferServiceImpl implements NotesTransferService {
   constructor(
@@ -23,20 +24,15 @@ export class NotesTransferServiceImpl implements NotesTransferService {
 
   async transfer(
     userId: string,
-    { feedlyToken, feedlyStreamName, todoistToken, todoistProjectId }: UserInfo,
+    { feedlyToken, feedlyStreamName, todoistToken, todoistProjectId, dailyPlan }: UserInfo,
     links: Links,
-  ) {
-    if (
-      !feedlyStreamName ||
-      !feedlyToken ||
-      !todoistToken ||
-      !todoistProjectId
-    ) {
-      return;
+  ): Promise<Links> {
+    if (!feedlyStreamName || !feedlyToken || !todoistToken || !todoistProjectId) {
+      return Links.empty();
     }
 
     try {
-      const countOnDay = 7;
+      const countOnDay = dailyPlan || DEFAULT_DAILY_PLAN;
       const countOnWeek = countOnDay * 7;
       const additionalLinks = this.takeAdditionalLinksOnWeek(links, countOnWeek);
       const articlesFromFeedlyCount = countOnWeek - additionalLinks.length;
@@ -46,6 +42,7 @@ export class NotesTransferServiceImpl implements NotesTransferService {
       await this.todoistClient.addTasks(todoistToken, todoistProjectId, articles, countOnDay, true);
       await this.feedlyClient.markAsUnsaved(articles, feedlyToken);
       await this.userService.run(userId, async (user) => user.removeLinks(additionalLinks));
+      return new Links(additionalLinks);
     } catch (e: any) {
       this.handleError(e, userId);
     }
@@ -72,7 +69,7 @@ export class NotesTransferServiceImpl implements NotesTransferService {
     );
   }
 
-  private handleError(e: any, userId: string) {
+  private handleError(e: any, userId: string): never {
     if (e.message == 'Request failed with status code 400' && e.config.url.startsWith('https://cloud.feedly.com/')) {
       throw new IncorrectFeedlyCredentialsError(userId);
     }

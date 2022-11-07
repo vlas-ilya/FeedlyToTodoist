@@ -5,28 +5,30 @@ import { IncorrectFeedlyCredentialsError } from '../../../infrastructure-interfa
 import { IncorrectTodoistCredentialsError } from '../../../infrastructure-interfaces/network/error/IncorrectTodoistCredentialsError';
 import { UnknownError } from '../../../infrastructure-interfaces/network/error/UnknownError';
 import { TelegramClient } from '../../../utils/telegram/TelegramBotStarter';
-import {
-  INCORRECT_FEEDLY_CREDENTIALS,
-  INCORRECT_TODOIST_CREDENTIALS,
-  UNKNOWN_ERROR,
-} from '../../../constants/responses';
+import { UserService } from '../../../infrastructure-interfaces/services/UserService';
 
 export class TransferUserLinksEventHandler implements EventHandler<TransferUserLinksEvent> {
   constructor(
+    private readonly userService: UserService,
     private readonly notesTransferService: NotesTransferService,
     private readonly telegramClient: TelegramClient,
   ) {}
 
   async handle(event: TransferUserLinksEvent) {
     try {
-      await this.notesTransferService.transfer(event.userId.value, event.userInfo, event.links);
+      const addedLinks = await this.notesTransferService.transfer(event.userId.value, event.userInfo, event.links);
+      await this.userService.run(event.userId.value, async (user) => user.wasTransferringAttempt('NO_ERROR', addedLinks));
     } catch (e) {
       if (e instanceof IncorrectFeedlyCredentialsError) {
-        await this.telegramClient.send(e.userId, INCORRECT_FEEDLY_CREDENTIALS);
+        await this.userService.run(event.userId.value, async (user) =>
+          user.wasTransferringAttempt('INCORRECT_FEEDLY_CREDENTIALS'),
+        );
       } else if (e instanceof IncorrectTodoistCredentialsError) {
-        await this.telegramClient.send(e.userId, INCORRECT_TODOIST_CREDENTIALS);
+        await this.userService.run(event.userId.value, async (user) =>
+          user.wasTransferringAttempt('INCORRECT_TODOIST_CREDENTIALS'),
+        );
       } else if (e instanceof UnknownError) {
-        await this.telegramClient.send(e.userId, UNKNOWN_ERROR);
+        await this.userService.run(event.userId.value, async (user) => user.wasTransferringAttempt('UNKNOWN_ERROR'));
       }
     }
   }

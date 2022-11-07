@@ -1,20 +1,20 @@
 import { UserDao } from '../../infrastructure-interfaces/dao/UserDao';
-import { UserDto } from '../../infrastructure-interfaces/dao/dto/UserDto';
+import { UserInfoDto } from '../../infrastructure-interfaces/dao/dto/UserInfoDto';
 
 export class UserDaoImpl implements UserDao {
   private userDtoDatabase: {
-    [key: string]: UserDto;
+    [key: string]: UserInfoDto;
   } = {};
 
-  async findById(id: string): Promise<UserDto> {
+  async findById(id: string): Promise<UserInfoDto> {
     return this.userDtoDatabase[id];
   }
 
   async create(id: string): Promise<void> {
-    this.userDtoDatabase[id] = new UserDto();
+    this.userDtoDatabase[id] = new UserInfoDto();
   }
 
-  async saveUserInfo(id: string, userInfo: UserDto) {
+  async saveUserInfo(id: string, userInfo: UserInfoDto) {
     this.userDtoDatabase[id] = userInfo;
   }
 
