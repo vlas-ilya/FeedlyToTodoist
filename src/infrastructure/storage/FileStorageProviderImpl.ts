@@ -1,8 +1,7 @@
-import { promises as fs } from 'fs';
-
 import { FileStorageProvider } from '../../infrastructure-interfaces/storage/FileStorageProvider';
 import { FileStorage } from '../../infrastructure-interfaces/storage/FileStorage';
 import { FileStorageImpl } from './FileStorageImpl';
+import { Storage } from '../../utils/storage';
 
 export class FileStorageProviderImpl implements FileStorageProvider {
   private storages = {} as {
@@ -12,11 +11,15 @@ export class FileStorageProviderImpl implements FileStorageProvider {
   };
 
   private loadedPromise = new Promise<void>(async (resolve, reject) => {
-    await this.load();
-    resolve();
+    try {
+      await this.load();
+      resolve();
+    } catch (e) {
+      reject(e);
+    }
   });
 
-  constructor() {
+  constructor(private readonly fs: Storage) {
     this.loadedPromise
       .then(() => console.log('FileStorageProvider initialised'))
       .catch((e) => console.log('FileStorageProvider not initialised', e));
@@ -26,11 +29,11 @@ export class FileStorageProviderImpl implements FileStorageProvider {
     await this.loadedPromise;
     if (!this.storages[name]) {
       this.storages[name] = {} as { [key: string]: FileStorage };
-      await fs.mkdir(`./data/${name}`);
+      await this.fs.mkdir(`./data/${name}`);
     }
     if (!this.storages[name][id]) {
-      this.storages[name][id] = new FileStorageImpl(`./data/${name}/${id}`);
-      const fileHandle = await fs.open(`./data/${name}/${id}`, 'w');
+      this.storages[name][id] = new FileStorageImpl(`./data/${name}/${id}`, this.fs);
+      const fileHandle = await this.fs.open(`./data/${name}/${id}`, 'w');
       await fileHandle.close();
     }
     return this.storages[name][id];
@@ -42,16 +45,16 @@ export class FileStorageProviderImpl implements FileStorageProvider {
   }
 
   private async load() {
-    const directories = await fs.readdir('./data');
+    const directories = await this.fs.readdir('./data');
     for (let directory of directories) {
-      const stat = await fs.lstat(`./data/${directory}`);
+      const stat = await this.fs.lstat(`./data/${directory}`);
       if (stat.isDirectory()) {
         this.storages[directory] = {} as { [key: string]: FileStorage };
-        const files = await fs.readdir(`./data/${directory}/`);
+        const files = await this.fs.readdir(`./data/${directory}/`);
         for (let file of files) {
-          const stat = await fs.lstat(`./data/${directory}/${file}`);
+          const stat = await this.fs.lstat(`./data/${directory}/${file}`);
           if (stat.isFile()) {
-            this.storages[directory][file] = new FileStorageImpl(`./data/${directory}/${file}`);
+            this.storages[directory][file] = new FileStorageImpl(`./data/${directory}/${file}`, this.fs);
           }
         }
       }

@@ -1,16 +1,15 @@
-import { promises as fs } from 'fs';
-
 import { FileStorage } from '../../infrastructure-interfaces/storage/FileStorage';
+import { Storage } from '../../utils/storage';
 
 export class FileStorageImpl implements FileStorage {
-  constructor(private readonly path: string) {}
+  constructor(private readonly path: string, private readonly fs: Storage) {}
 
   async read(): Promise<any> {
-    let buffer = await fs.readFile(this.path);
+    let buffer = await this.fs.readFile(this.path);
     return JSON.parse(buffer.toString());
   }
 
   async write(value: any) {
-    await fs.writeFile(this.path, JSON.stringify(value));
+    await this.fs.writeFile(this.path, JSON.stringify(value));
   }
 }

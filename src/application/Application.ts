@@ -37,6 +37,7 @@ import { TitleLoader } from '../infrastructure-interfaces/network/TitleLoader';
 import { TitleLoaderImpl } from '../infrastructure/network/TitleLoaderImpl';
 import { IdProvider } from '../utils/providers/IdProvider';
 import { fetch, Fetch } from '../utils/fetch';
+import { promises as fs } from 'fs';
 import { DateProvider } from '../utils/providers/DateProvider';
 import { RandomProvider } from '../utils/providers/RandomProvider';
 import { TransferringStatusDao } from '../infrastructure-interfaces/dao/TransferringStatusDao';
@@ -99,7 +100,7 @@ export class Application {
 
   @Entity()
   private fileStorageProvider(): FileStorageProvider {
-    return new FileStorageProviderImpl();
+    return new FileStorageProviderImpl(fs);
   }
 
   @Entity()
