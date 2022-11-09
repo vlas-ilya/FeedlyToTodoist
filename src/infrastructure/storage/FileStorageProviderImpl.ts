@@ -45,13 +45,11 @@ export class FileStorageProviderImpl implements FileStorageProvider {
   }
 
   private async load() {
-    const directories = await this.fs.readdir('./data');
-    for (let directory of directories) {
+    for (let directory of await this.fs.readdir('./data')) {
       const stat = await this.fs.lstat(`./data/${directory}`);
       if (stat.isDirectory()) {
         this.storages[directory] = {} as { [key: string]: FileStorage };
-        const files = await this.fs.readdir(`./data/${directory}/`);
-        for (let file of files) {
+        for (let file of await this.fs.readdir(`./data/${directory}/`)) {
           const stat = await this.fs.lstat(`./data/${directory}/${file}`);
           if (stat.isFile()) {
             this.storages[directory][file] = new FileStorageImpl(`./data/${directory}/${file}`, this.fs);
