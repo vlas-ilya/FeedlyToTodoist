@@ -8,10 +8,7 @@ export type TransferringStatusError =
   | 'UNKNOWN_ERROR';
 
 export class TransferringStatus extends BaseValueObject {
-  constructor(
-    public readonly status: TransferringStatusValue,
-    public readonly error: TransferringStatusError,
-  ) {
+  constructor(public readonly status: TransferringStatusValue, public readonly error: TransferringStatusError) {
     super();
   }
 

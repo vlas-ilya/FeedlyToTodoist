@@ -1,9 +1,9 @@
-import { EventCode } from '../../constants/EventCode';
+import { Events } from '../../constants/events';
 
 export abstract class BaseEvent {
-  readonly eventCode: EventCode;
+  readonly eventCode: Events;
 
-  protected constructor(eventCode: EventCode) {
+  protected constructor(eventCode: Events) {
     this.eventCode = eventCode;
   }
 }

@@ -10,7 +10,7 @@ export class TransferringStatusDaoImpl implements TransferringStatusDao {
     return this.transferringStatusDtoDatabase[id];
   }
 
-  async saveTransferringStatus(id: string, transferringStatusDto: TransferringStatusDto) {
+  async save(id: string, transferringStatusDto: TransferringStatusDto) {
     this.transferringStatusDtoDatabase[id] = transferringStatusDto;
   }
 }

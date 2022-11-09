@@ -14,7 +14,7 @@ export class UserDaoImpl implements UserDao {
     this.userDtoDatabase[id] = new UserInfoDto();
   }
 
-  async saveUserInfo(id: string, userInfo: UserInfoDto) {
+  async save(id: string, userInfo: UserInfoDto) {
     this.userDtoDatabase[id] = userInfo;
   }
 

@@ -1,7 +1,7 @@
 import { BaseId } from './BaseId';
 import { BaseEvent } from './BaseEvent';
 
-export abstract class BaseEntity<ID extends BaseId> {
+export abstract class BaseEntity<ID extends BaseId, DATA> {
   private _events: BaseEvent[] = [];
 
   protected constructor(public readonly id: ID) {}
@@ -16,7 +16,7 @@ export abstract class BaseEntity<ID extends BaseId> {
     return result;
   }
 
-  equals(entityOrId: BaseEntity<ID> | ID): boolean {
+  equals(entityOrId: BaseEntity<ID, DATA> | ID): boolean {
     if (!entityOrId) {
       return false;
     }
@@ -25,4 +25,9 @@ export abstract class BaseEntity<ID extends BaseId> {
     }
     return this.id && this.id.equals(entityOrId);
   }
+
+  abstract save(delegate: SaveChangesDelegate<DATA>): Promise<void>;
 }
+
+export type SaveChangesDelegate<CHANGES> = (...data: CHANGES[]) => Promise<void>;
+

@@ -13,13 +13,13 @@ export class UserServiceImpl implements UserService {
   async run(userId: string, fun: (user: User) => Promise<void>) {
     const user = await this.userRepository.getUser(new UserId(userId));
     await fun(user);
+    await this.userRepository.save(user);
     await this.eventDispatcher.dispatch(...user.events());
   }
 
   async createUser(id: string): Promise<void> {
-    const user = new User(new UserId(id), UserInfo.empty(), Links.empty(), TransferringStatus.empty());
-    user.create();
-    await this.userRepository.createEmptyUser(new UserId(id));
+    const user = User.create(id);
+    await this.userRepository.save(user);
     await this.eventDispatcher.dispatch(...user.events());
   }
 
@@ -28,6 +28,7 @@ export class UserServiceImpl implements UserService {
     await Promise.all(
       users.map(async (user) => {
         fun(user);
+        await this.userRepository.save(user);
         await this.eventDispatcher.dispatch(...user.events());
       }),
     );

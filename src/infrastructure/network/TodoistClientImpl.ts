@@ -3,30 +3,25 @@ import { Article } from '../../infrastructure-interfaces/network/entities/Articl
 import { Fetch } from '../../utils/fetch';
 import { IdProvider } from '../../utils/providers/IdProvider';
 import { DateProvider } from '../../utils/providers/DateProvider';
-import { RandomProvider } from '../../utils/providers/RandomProvider';
 
 export class TodoistClientImpl implements TodoistClient {
   constructor(
-    private readonly idGenerator: IdProvider,
-    private readonly dateGenerator: DateProvider,
-    private readonly randomGenerator: RandomProvider,
+    private readonly idProvider: IdProvider,
+    private readonly dateProvider: DateProvider,
     private readonly fetch: Fetch,
   ) {}
 
-  async addTasks(token: string, projectId: string, articles: Article[], countOnDay: number, useRandom: boolean) {
-    if (useRandom) {
-      this.randomGenerator.shuffle(articles);
-    }
-    const realCountOnDay = Math.min(Math.ceil(articles.length / 7), countOnDay);
-    for (let i = 0; i < Math.min(7 * realCountOnDay, articles.length); i++) {
-      articles[i].date = await this.getDate(i / realCountOnDay);
-      await this.addToTodoist(articles[i], token, projectId);
+  async addTasks(token: string, projectId: string, articles: Article[][]) {
+    for (let i = 0; i < articles.length; i++) {
+      for (let j = 0; j < articles[i].length; j++) {
+        articles[i][j].date = await this.getDate(i);
+        await this.addToTodoist(articles[i][j], token, projectId);
+      }
     }
   }
 
-  async getDate(addDay: number): Promise<string> {
-    const day = Math.floor(addDay);
-    const date = this.dateGenerator.generate();
+  async getDate(day: number): Promise<string> {
+    const date = this.dateProvider.generate();
     date.setDate(date.getDate() + day);
     return date.toISOString().substring(0, 10);
   }
@@ -35,7 +30,7 @@ export class TodoistClientImpl implements TodoistClient {
     await this.fetch('https://api.todoist.com/rest/v1/tasks').post({
       headers: {
         'Content-Type': 'application/json',
-        'X-Request-Id': this.idGenerator.generate(),
+        'X-Request-Id': this.idProvider.generate(),
         Authorization: `Bearer ${todoistToken}`,
       },
       data: {

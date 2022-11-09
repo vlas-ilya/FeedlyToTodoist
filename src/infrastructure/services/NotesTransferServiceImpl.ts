@@ -12,6 +12,7 @@ import { UserInfo } from '../../domain/user/vo/UserInfo';
 import { Links } from '../../domain/user/vo/Links';
 import { IdProvider } from '../../utils/providers/IdProvider';
 import { DEFAULT_DAILY_PLAN } from '../../constants/common';
+import { WeekSchedule } from './utils/WeekSchedule';
 
 export class NotesTransferServiceImpl implements NotesTransferService {
   constructor(
@@ -33,40 +34,24 @@ export class NotesTransferServiceImpl implements NotesTransferService {
 
     try {
       const countOnDay = dailyPlan || DEFAULT_DAILY_PLAN;
-      const countOnWeek = countOnDay * 7;
-      const additionalLinks = this.takeAdditionalLinksOnWeek(links, countOnWeek);
-      const articlesFromFeedlyCount = countOnWeek - additionalLinks.length;
-
-      const articles = await this.feedlyClient.loadArticles(feedlyToken, feedlyStreamName, articlesFromFeedlyCount);
-      await this.addAdditionalLinks(articles, additionalLinks);
-      await this.todoistClient.addTasks(todoistToken, todoistProjectId, articles, countOnDay, true);
+      const weekSchedule = new WeekSchedule(countOnDay, async (link: Link) => await this.convertToArticle(link));
+      await weekSchedule.addLinks(links.links);
+      const articles = await this.feedlyClient.loadArticles(feedlyToken, feedlyStreamName, weekSchedule.freeSlots());
+      await weekSchedule.addArticles(articles);
+      await this.todoistClient.addTasks(todoistToken, todoistProjectId, weekSchedule.getSchedule());
       await this.feedlyClient.markAsUnsaved(articles, feedlyToken);
-      await this.userService.run(userId, async (user) => user.removeLinks(additionalLinks));
-      return new Links(additionalLinks);
+      return new Links(weekSchedule.addedLinks());
     } catch (e: any) {
       this.handleError(e, userId);
     }
   }
 
-  private takeAdditionalLinksOnWeek(links: Links, countOnWeek: number) {
-    return links.links.length > countOnWeek ? links.links.slice(0, countOnWeek) : links.links;
-  }
-
-  private async addAdditionalLinks(articles: Article[], additionalLinks: Link[]) {
-    const additionalArticles = await this.convertToArticle(additionalLinks);
-    articles.push(...additionalArticles);
-  }
-
-  private async convertToArticle(additionalLinks: Link[]): Promise<Article[]> {
-    return Promise.all(
-      additionalLinks
-        .map((link) => link.value)
-        .map(async (url) => ({
-          url,
-          id: this.idGenerator.generate(),
-          title: await this.titleLoader.loadTitle(url),
-        })),
-    );
+  private async convertToArticle(link: Link): Promise<Article> {
+    return {
+      url: link.value,
+      id: this.idGenerator.generate(),
+      title: await this.titleLoader.loadTitle(link.value),
+    };
   }
 
   private handleError(e: any, userId: string): never {

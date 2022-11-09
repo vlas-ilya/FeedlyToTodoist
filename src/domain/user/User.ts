@@ -1,10 +1,8 @@
-import { BaseEntity } from '../../utils/domain/BaseEntity';
+import { BaseEntity, SaveChangesDelegate } from '../../utils/domain/BaseEntity';
 import { UserId } from './vo/UserId';
-import { UserInfoWasUpdatedEvent } from './events/UserInfoWasUpdatedEvent';
 import { UserInfo } from './vo/UserInfo';
 import { ReplayToUserEvent } from './events/ReplayToUserEvent';
 import { Links } from './vo/Links';
-import { UserLinksWasUpdatedEvent } from './events/UserLinksWasUpdatedEvent';
 import { TransferUserLinksEvent } from './events/TransferUserLinksEvent';
 import { Link } from './vo/Link';
 import {
@@ -29,9 +27,11 @@ import {
 import { DateProvider } from '../../utils/providers/DateProvider';
 import { DEFAULT_DAILY_PLAN } from '../../constants/common';
 import { TransferringStatus, TransferringStatusError } from './vo/TransferringStatus';
-import { TransferringStatusWasUpdatedEvent } from './events/TransferringStatusWasUpdatedEvent';
+import { IdProvider } from '../../utils/providers/IdProvider';
 
-export class User extends BaseEntity<UserId> {
+type USER_DATA = [UserInfo, Links, TransferringStatus];
+
+export class User extends BaseEntity<UserId, USER_DATA> {
   constructor(
     userId: UserId,
     private userInfo: UserInfo,
@@ -43,39 +43,33 @@ export class User extends BaseEntity<UserId> {
 
   public changeFeedlyToken() {
     this.userInfo.userStatus = 'SET_FEEDLY_TOKEN';
-    this.addEvent(new UserInfoWasUpdatedEvent(this.id, this.userInfo));
     this.addEvent(new ReplayToUserEvent(this.id, SET_FEEDLY_TOKEN_RESPONSE));
   }
 
   public changeFeedlyStreamName() {
     this.userInfo.userStatus = 'SET_FEEDLY_STREAM_NAME';
-    this.addEvent(new UserInfoWasUpdatedEvent(this.id, this.userInfo));
     this.addEvent(new ReplayToUserEvent(this.id, SET_FEEDLY_STREAM_NAME_RESPONSE));
   }
 
   public changeTodoistToken() {
     this.userInfo.userStatus = 'SET_TODOIST_TOKEN';
-    this.addEvent(new UserInfoWasUpdatedEvent(this.id, this.userInfo));
     this.addEvent(new ReplayToUserEvent(this.id, SET_TODOIST_TOKEN_RESPONSE));
   }
 
   public changeTodoistProjectId() {
     this.userInfo.userStatus = 'SET_TODOIST_PROJECT_ID';
-    this.addEvent(new UserInfoWasUpdatedEvent(this.id, this.userInfo));
     this.addEvent(new ReplayToUserEvent(this.id, SET_TODOIST_PROJECT_ID_RESPONSE));
   }
 
   setDailyPlan() {
     this.userInfo.userStatus = 'SET_DAILY_PLAN';
-    this.addEvent(new UserInfoWasUpdatedEvent(this.id, this.userInfo));
     this.addEvent(new ReplayToUserEvent(this.id, SET_DAILY_PLAN));
   }
 
-  public setValue(value: string, dateGenerator: DateProvider) {
+  public setValue(value: string, dateGenerator: DateProvider, idProvider: IdProvider) {
     switch (this.userInfo.userStatus) {
       case 'INIT':
-        this.links.addLinks(Link.convertToLinks(value, dateGenerator));
-        this.addEvent(new UserLinksWasUpdatedEvent(this.id, this.links));
+        this.links.addLinks(Link.convertToLinks(value, dateGenerator, idProvider));
         break;
       case 'SET_FEEDLY_TOKEN':
         this.userInfo.feedlyToken = value;
@@ -95,7 +89,6 @@ export class User extends BaseEntity<UserId> {
     }
     this.checkConfigFields();
     this.userInfo.userStatus = 'INIT';
-    this.addEvent(new UserInfoWasUpdatedEvent(this.id, this.userInfo));
   }
 
   private checkConfigFields() {
@@ -125,8 +118,10 @@ export class User extends BaseEntity<UserId> {
     return emptyFields;
   }
 
-  create() {
-    this.checkConfigFields();
+  static create(id: string): User {
+    const user = new User(new UserId(id), UserInfo.empty(), Links.empty(), TransferringStatus.empty());
+    user.checkConfigFields();
+    return user;
   }
 
   transferLinks() {
@@ -135,7 +130,6 @@ export class User extends BaseEntity<UserId> {
 
   removeLinks(links: Link[]) {
     this.links = this.links.removeLinks(links);
-    this.addEvent(new UserLinksWasUpdatedEvent(this.id, this.links));
   }
 
   showStatus() {
@@ -193,7 +187,9 @@ export class User extends BaseEntity<UserId> {
       error == 'NO_ERROR'
         ? new TransferringStatus('RUN_SUCCESSFULLY', 'NO_ERROR')
         : new TransferringStatus('RUN_UNSUCCESSFULLY', error);
+  }
 
-    this.addEvent(new TransferringStatusWasUpdatedEvent(this.id, this.transferringStatus));
+  async save(save: SaveChangesDelegate<[UserInfo, Links, TransferringStatus]>) {
+    await save([this.userInfo, this.links, this.transferringStatus]);
   }
 }

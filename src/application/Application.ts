@@ -22,10 +22,8 @@ import {
 import { TelegramController } from './controllers/TelegramController';
 import { BaseEvent } from '../utils/domain/BaseEvent';
 import { EventHandler } from '../infrastructure-interfaces/events/handlers/EventHandler';
-import { EventCode } from '../constants/EventCode';
-import { UserInfoWasUpdatedEventHandler } from '../infrastructure/events/handlers/UserInfoWasUpdatedEventHandler';
+import { Events } from '../constants/events';
 import { ReplayToUserEventHandler } from '../infrastructure/events/handlers/ReplayToUserEventHandler';
-import { UserLinksWasUpdatedEventHandler } from '../infrastructure/events/handlers/UserLinksWasUpdatedEventHandler';
 import { TransferUserLinksEventHandler } from '../infrastructure/events/handlers/TransferUserLinksEventHandler';
 import { getOrThrowIfEmpty } from '../utils/errors';
 import { EventHandlerIsNotDeclaredError } from '../infrastructure-interfaces/events/error/EventHandlerIsNotDeclaredError';
@@ -41,7 +39,6 @@ import { IdProvider } from '../utils/providers/IdProvider';
 import { fetch, Fetch } from '../utils/fetch';
 import { DateProvider } from '../utils/providers/DateProvider';
 import { RandomProvider } from '../utils/providers/RandomProvider';
-import { TransferringStatusWasUpdatedEventHandler } from '../infrastructure/events/handlers/TransferringStatusWasUpdatedEventHandler';
 import { TransferringStatusDao } from '../infrastructure-interfaces/dao/TransferringStatusDao';
 import { TransferringStatusDaoImpl } from '../infrastructure/dao/TransferringStatusDaoImpl';
 
@@ -58,7 +55,7 @@ export class Application {
   @Entity()
   @TelegramBotControllerProvider()
   public telegramController(): TelegramController {
-    return new TelegramController(this.userService(), this.dateGenerator());
+    return new TelegramController(this.userService(), this.dateProvider(), this.idProvider());
   }
 
   @Entity()
@@ -101,15 +98,10 @@ export class Application {
   @Entity()
   private eventDispatcher(): EventDispatcher {
     const handlers = {
-      UserInfoWasUpdatedEvent: () => new UserInfoWasUpdatedEventHandler(this.userDao()),
       ReplayToUserEvent: () => new ReplayToUserEventHandler(this.telegramClient()),
-      UserLinksWasUpdatedEvent: () => new UserLinksWasUpdatedEventHandler(this.linkDao()),
-      TransferUserLinksEvent: () =>
-        new TransferUserLinksEventHandler(this.userService(), this.notesTransferService(), this.telegramClient()),
-      TransferringStatusWasUpdatedEvent: () =>
-        new TransferringStatusWasUpdatedEventHandler(this.transferringStatusDao()),
+      TransferUserLinksEvent: () => new TransferUserLinksEventHandler(this.userService(), this.notesTransferService()),
     } as {
-      [key in EventCode]: () => EventHandler<any>;
+      [key in Events]: () => EventHandler<any>;
     };
 
     const eventHandlerProvider = <E extends BaseEvent>(event: E) =>
@@ -125,7 +117,7 @@ export class Application {
       this.feedlyClient(),
       this.todoistClient(),
       this.titleLoader(),
-      this.idGenerator(),
+      this.idProvider(),
     );
   }
 
@@ -136,7 +128,7 @@ export class Application {
 
   @Entity()
   private todoistClient(): TodoistClient {
-    return new TodoistClientImpl(this.idGenerator(), this.dateGenerator(), this.randomGenerator(), this.fetch());
+    return new TodoistClientImpl(this.idProvider(), this.dateProvider(), this.fetch());
   }
 
   @Entity()
@@ -145,7 +137,7 @@ export class Application {
   }
 
   @Entity()
-  private idGenerator(): IdProvider {
+  private idProvider(): IdProvider {
     return {
       generate(): string {
         return uuidv4();
@@ -154,7 +146,7 @@ export class Application {
   }
 
   @Entity()
-  private dateGenerator(): DateProvider {
+  private dateProvider(): DateProvider {
     return {
       generate(): Date {
         return new Date();
@@ -163,7 +155,7 @@ export class Application {
   }
 
   @Entity()
-  private randomGenerator(): RandomProvider {
+  private randomProvider(): RandomProvider {
     return {
       shuffle<T>(list: T[]) {
         list.sort(() => Math.random() - 0.5);

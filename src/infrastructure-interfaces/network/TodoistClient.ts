@@ -4,8 +4,6 @@ export interface TodoistClient {
   addTasks(
     token: string,
     projectId: string,
-    articles: Article[],
-    countOnDay: number,
-    useRandom: boolean,
+    articles: Article[][],
   ): Promise<void>;
 }

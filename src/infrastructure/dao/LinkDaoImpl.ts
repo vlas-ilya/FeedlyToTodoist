@@ -10,7 +10,7 @@ export class LinkDaoImpl implements LinkDao {
     return this.linkDtoDatabase[id];
   }
 
-  async saveUserLinks(id: string, linkDto: LinksDto) {
+  async save(id: string, linkDto: LinksDto) {
     this.linkDtoDatabase[id] = linkDto;
   }
 }
