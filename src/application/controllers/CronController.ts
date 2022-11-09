@@ -1,4 +1,4 @@
-import { Job, CronJobController } from '../../utils/cron/CronStarter';
+import { CronJobController, Job } from '../../utils/cron/CronStarter';
 import { UserService } from '../../infrastructure-interfaces/services/UserService';
 import { CRON } from '../../constants/common';
 

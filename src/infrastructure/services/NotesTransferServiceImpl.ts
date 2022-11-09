@@ -20,7 +20,7 @@ export class NotesTransferServiceImpl implements NotesTransferService {
     private readonly feedlyClient: FeedlyClient,
     private readonly todoistClient: TodoistClient,
     private readonly titleLoader: TitleLoader,
-    private readonly idGenerator: IdProvider,
+    private readonly idProvider: IdProvider,
   ) {}
 
   async transfer(
@@ -34,12 +34,12 @@ export class NotesTransferServiceImpl implements NotesTransferService {
 
     try {
       const countOnDay = dailyPlan || DEFAULT_DAILY_PLAN;
-      const weekSchedule = new WeekSchedule(countOnDay, async (link: Link) => await this.convertToArticle(link));
+      const weekSchedule = new WeekSchedule(countOnDay, this.convertToArticle.bind(this));
       await weekSchedule.addLinks(links.links);
       const articles = await this.feedlyClient.loadArticles(feedlyToken, feedlyStreamName, weekSchedule.freeSlots());
       await weekSchedule.addArticles(articles);
       await this.todoistClient.addTasks(todoistToken, todoistProjectId, weekSchedule.getSchedule());
-      await this.feedlyClient.markAsUnsaved(articles, feedlyToken);
+      await this.feedlyClient.markAsUnsaved(weekSchedule.addedArticles(), feedlyToken);
       return new Links(weekSchedule.addedLinks());
     } catch (e: any) {
       this.handleError(e, userId);
@@ -49,7 +49,7 @@ export class NotesTransferServiceImpl implements NotesTransferService {
   private async convertToArticle(link: Link): Promise<Article> {
     return {
       url: link.value,
-      id: this.idGenerator.generate(),
+      id: this.idProvider.generate(),
       title: await this.titleLoader.loadTitle(link.value),
     };
   }

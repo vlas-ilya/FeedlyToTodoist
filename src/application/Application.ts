@@ -11,7 +11,6 @@ import { LinkDaoImpl } from '../infrastructure/dao/LinkDaoImpl';
 import { LinkDao } from '../infrastructure-interfaces/dao/LinkDao';
 import { NotesTransferService } from '../infrastructure-interfaces/services/NotesTransferService';
 import { NotesTransferServiceImpl } from '../infrastructure/services/NotesTransferServiceImpl';
-const { v4: uuidv4 } = require('uuid');
 import {
   TelegramApiToken,
   TelegramBotControllerProvider,
@@ -44,6 +43,8 @@ import { TransferringStatusDao } from '../infrastructure-interfaces/dao/Transfer
 import { TransferringStatusDaoImpl } from '../infrastructure/dao/TransferringStatusDaoImpl';
 import { FileStorageProvider } from '../infrastructure-interfaces/storage/FileStorageProvider';
 import { FileStorageProviderImpl } from '../infrastructure/storage/FileStorageProviderImpl';
+
+const { v4: uuidv4 } = require('uuid');
 
 @Context()
 @TelegramBotStarter()

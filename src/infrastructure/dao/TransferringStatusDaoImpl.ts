@@ -2,8 +2,6 @@ import { TransferringStatusDao } from '../../infrastructure-interfaces/dao/Trans
 import { TransferringStatusDto } from '../../infrastructure-interfaces/dao/dto/TransferringStatusDto';
 import { FileStorageProvider } from '../../infrastructure-interfaces/storage/FileStorageProvider';
 import { EntityNotFoundError } from '../../infrastructure-interfaces/dao/errors/EntityNotFoundError';
-import { LinksDto } from '../../infrastructure-interfaces/dao/dto/LinksDto';
-import { LinkDto } from '../../infrastructure-interfaces/dao/dto/LinkDto';
 
 export class TransferringStatusDaoImpl implements TransferringStatusDao {
   private readonly FILE_STORAGE_NAME = `transferring-dao`;
