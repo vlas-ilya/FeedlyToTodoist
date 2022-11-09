@@ -13,7 +13,7 @@ export function Entity(): MethodDecorator {
 }
 
 export function Context() {
-  return function<T extends { new (...args: any[]): {} }>(constructor: T) {
+  return function <T extends { new (...args: any[]): {} }>(constructor: T) {
     return class extends constructor {
       constructor(...args: any[]) {
         super(...args);
@@ -22,7 +22,7 @@ export function Context() {
         if (toStart && toStart.length > 0) {
           Promise.all(
             toStart.map(async (starter: any) => {
-              await starter()
+              await starter();
             }),
           )
             .then(() => console.log('App starts'))
@@ -30,5 +30,5 @@ export function Context() {
         }
       }
     };
-  }
+  };
 }

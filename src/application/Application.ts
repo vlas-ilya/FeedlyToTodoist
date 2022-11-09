@@ -41,6 +41,8 @@ import { DateProvider } from '../utils/providers/DateProvider';
 import { RandomProvider } from '../utils/providers/RandomProvider';
 import { TransferringStatusDao } from '../infrastructure-interfaces/dao/TransferringStatusDao';
 import { TransferringStatusDaoImpl } from '../infrastructure/dao/TransferringStatusDaoImpl';
+import { FileStorageProvider } from '../infrastructure-interfaces/storage/FileStorageProvider';
+import { FileStorageProviderImpl } from '../infrastructure/storage/FileStorageProviderImpl';
 
 @Context()
 @TelegramBotStarter()
@@ -82,17 +84,22 @@ export class Application {
 
   @Entity()
   private userDao(): UserDao {
-    return new UserDaoImpl();
+    return new UserDaoImpl(this.fileStorageProvider());
   }
 
   @Entity()
   private linkDao(): LinkDao {
-    return new LinkDaoImpl();
+    return new LinkDaoImpl(this.fileStorageProvider());
   }
 
   @Entity()
   private transferringStatusDao(): TransferringStatusDao {
-    return new TransferringStatusDaoImpl();
+    return new TransferringStatusDaoImpl(this.fileStorageProvider());
+  }
+
+  @Entity()
+  private fileStorageProvider(): FileStorageProvider {
+    return new FileStorageProviderImpl();
   }
 
   @Entity()

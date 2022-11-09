@@ -34,7 +34,7 @@ function startCronJobs() {
       }
     });
   });
-  console.log("Cron job was started");
+  console.log('Cron job was started');
 }
 
 export function CronJobControllerProvider(): MethodDecorator {

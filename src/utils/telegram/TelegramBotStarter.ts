@@ -73,9 +73,8 @@ async function createBot() {
   });
 
   config.bot.on('text', async (ctx: Context) => {
-
     // @ts-ignore
-    const commands = config.onCommand.filter(command => command.command == ctx.message.text);
+    const commands = config.onCommand.filter((command) => command.command == ctx.message.text);
 
     if (commands.length == 0) {
       await Promise.all(
@@ -114,7 +113,7 @@ async function createBot() {
 
   await config.bot.launch();
 
-  console.log("Telegram bot was started");
+  console.log('Telegram bot was started');
 }
 
 export function TelegramBotControllerProvider(): MethodDecorator {
@@ -177,11 +176,10 @@ export function TelegramClientEndpoint(): MethodDecorator {
           await config.bot.telegram.sendMessage(chatId, message);
         },
       } as TelegramClient;
-    }
-  }
+    };
+  };
 }
 
 export interface TelegramClient {
   send(chatId: string, message: string): Promise<void>;
 }
-

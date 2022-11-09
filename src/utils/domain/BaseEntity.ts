@@ -30,4 +30,3 @@ export abstract class BaseEntity<ID extends BaseId, DATA> {
 }
 
 export type SaveChangesDelegate<CHANGES> = (...data: CHANGES[]) => Promise<void>;
-

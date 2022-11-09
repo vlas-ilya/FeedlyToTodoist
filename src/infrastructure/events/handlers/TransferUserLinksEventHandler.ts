@@ -7,15 +7,14 @@ import { UnknownError } from '../../../infrastructure-interfaces/network/error/U
 import { UserService } from '../../../infrastructure-interfaces/services/UserService';
 
 export class TransferUserLinksEventHandler implements EventHandler<TransferUserLinksEvent> {
-  constructor(
-    private readonly userService: UserService,
-    private readonly notesTransferService: NotesTransferService,
-  ) {}
+  constructor(private readonly userService: UserService, private readonly notesTransferService: NotesTransferService) {}
 
   async handle(event: TransferUserLinksEvent) {
     try {
       const addedLinks = await this.notesTransferService.transfer(event.userId.value, event.userInfo, event.links);
-      await this.userService.run(event.userId.value, async (user) => user.wasTransferringAttempt('NO_ERROR', addedLinks));
+      await this.userService.run(event.userId.value, async (user) =>
+        user.wasTransferringAttempt('NO_ERROR', addedLinks),
+      );
     } catch (e) {
       if (e instanceof IncorrectFeedlyCredentialsError) {
         await this.userService.run(event.userId.value, async (user) =>

@@ -1,3 +1,1 @@
-export type Events =
-  | 'ReplayToUserEvent'
-  | 'TransferUserLinksEvent';
+export type Events = 'ReplayToUserEvent' | 'TransferUserLinksEvent';
