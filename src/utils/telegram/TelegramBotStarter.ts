@@ -51,7 +51,16 @@ async function createBot() {
           const controller = config.starter.prototype[provider]();
           const context = controller.getContext();
           if (controller[method] && controller[method]._onStart) {
-            controller[method].bind(context)(ctx);
+            try {
+              const promise = controller[method].bind(context)(ctx);
+              if (promise instanceof Promise) {
+                promise.catch(e => {
+                  console.log("onStart", ctx, e);
+                });
+              }
+            } catch (e) {
+              console.log("onStart", ctx, e);
+            }
           }
         });
       }),
@@ -65,7 +74,16 @@ async function createBot() {
           const controller = config.starter.prototype[provider]();
           const context = controller.getContext();
           if (controller[method] && controller[method]._onHelp) {
-            controller[method].bind(context)(ctx);
+            try {
+              const promise = controller[method].bind(context)(ctx);
+              if (promise instanceof Promise) {
+                promise.catch(e => {
+                  console.log("onStart", ctx, e);
+                });
+              }
+            } catch (e) {
+              console.log("onStart", ctx, e);
+            }
           }
         });
       }),
@@ -83,7 +101,16 @@ async function createBot() {
             const controller = config.starter.prototype[provider]();
             const context = controller.getContext();
             if (controller[method] && controller[method]._onMessage) {
-              controller[method].bind(context)(ctx);
+              try {
+                const promise = controller[method].bind(context)(ctx);
+                if (promise instanceof Promise) {
+                  promise.catch(e => {
+                    console.log("onStart", ctx, e);
+                  });
+                }
+              } catch (e) {
+                console.log("onStart", ctx, e);
+              }
             }
           });
         }),
@@ -97,7 +124,16 @@ async function createBot() {
           const controller = config.starter.prototype[provider]();
           const context = controller.getContext();
           if (controller[command.method] && controller[command.method]._onCommand) {
-            controller[command.method].bind(context)(ctx);
+            try {
+              const promise = controller[command.method].bind(context)(ctx);
+              if (promise instanceof Promise) {
+                promise.catch(e => {
+                  console.log("onStart", ctx, e);
+                });
+              }
+            } catch (e) {
+              console.log("onStart", ctx, e);
+            }
           }
         });
       }),
