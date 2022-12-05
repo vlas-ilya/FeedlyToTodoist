@@ -27,6 +27,9 @@ export class FeedlyClientImpl implements FeedlyClient {
   }
 
   async markAsUnsaved(articles: Article[], token: string) {
+    if (articles.length == 0) {
+      return;
+    }
     const ignored = await this.fetch(`https://cloud.feedly.com/v3/markers`).post({
       data: {
         action: 'markAsUnsaved',
