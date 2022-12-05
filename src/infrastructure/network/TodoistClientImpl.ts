@@ -1,14 +1,15 @@
 import { TodoistClient } from '../../infrastructure-interfaces/network/TodoistClient';
 import { Article } from '../../infrastructure-interfaces/network/entities/Article';
-import { Fetch } from '../../utils/fetch';
 import { IdProvider } from '../../utils/providers/IdProvider';
 import { DateProvider } from '../../utils/providers/DateProvider';
+import { AddTaskArgs } from '@doist/todoist-api-typescript/dist/types/requests';
+import { TodoistApiProvider } from '../../utils/providers/TodoistApiProvider';
 
 export class TodoistClientImpl implements TodoistClient {
   constructor(
     private readonly idProvider: IdProvider,
     private readonly dateProvider: DateProvider,
-    private readonly fetch: Fetch,
+    private readonly todoistApiProvider: TodoistApiProvider,
   ) {}
 
   async addTasks(token: string, projectId: string, articles: Article[][]) {
@@ -27,17 +28,12 @@ export class TodoistClientImpl implements TodoistClient {
   }
 
   async addToTodoist(article: Article, todoistToken: string, todoistProjectId: string) {
-    await this.fetch('https://api.todoist.com/rest/v1/tasks').post({
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Request-Id': this.idProvider.generate(),
-        Authorization: `Bearer ${todoistToken}`,
-      },
-      data: {
-        project_id: todoistProjectId,
-        due_date: article.date,
-        content: `[${article.title}](${article.url})`,
-      },
-    });
+    const todoistApi = this.todoistApiProvider.get(todoistToken);
+    const task = {
+      project_id: todoistProjectId,
+      due_date: article.date,
+      content: `[${article.title}](${article.url})`,
+    } as AddTaskArgs;
+    await todoistApi.addTask(task, this.idProvider.generate());
   }
 }

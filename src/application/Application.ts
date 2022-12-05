@@ -43,6 +43,8 @@ import { TransferringStatusDao } from '../infrastructure-interfaces/dao/Transfer
 import { TransferringStatusDaoImpl } from '../infrastructure/dao/TransferringStatusDaoImpl';
 import { FileStorageProvider } from '../infrastructure-interfaces/storage/FileStorageProvider';
 import { FileStorageProviderImpl } from '../infrastructure/storage/FileStorageProviderImpl';
+import {TodoistApiProvider} from "../utils/providers/TodoistApiProvider";
+import {TodoistApi} from "@doist/todoist-api-typescript";
 
 const { v4: uuidv4 } = require('uuid');
 
@@ -137,7 +139,7 @@ export class Application {
 
   @Entity()
   private todoistClient(): TodoistClient {
-    return new TodoistClientImpl(this.idProvider(), this.dateProvider(), this.fetch());
+    return new TodoistClientImpl(this.idProvider(), this.dateProvider(), this.todoistApiProvider());
   }
 
   @Entity()
@@ -161,6 +163,15 @@ export class Application {
         return new Date();
       },
     };
+  }
+
+  @Entity()
+  private todoistApiProvider(): TodoistApiProvider {
+    return {
+      get(authToken: string, baseUrl?: string): TodoistApi {
+        return new TodoistApi(authToken, baseUrl);
+      }
+    }
   }
 
   @Entity()
