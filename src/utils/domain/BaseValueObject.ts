@@ -23,6 +23,10 @@ export abstract class BaseValueObject {
         return thisValue.equals(objectValue);
       }
 
+      if (thisValue instanceof Date && objectValue instanceof Date) {
+        return thisValue.getTime() === objectValue.getTime();
+      }
+
       return thisValue == objectValue;
     });
   }

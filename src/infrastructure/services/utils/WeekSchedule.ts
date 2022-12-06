@@ -30,8 +30,9 @@ export class WeekSchedule {
       [key: string]: Link[];
     };
     for (const link of links) {
-      groups[link.group] = groups[link.group] || [];
-      groups[link.group].push(link);
+      const group = link.groupName();
+      groups[group] = groups[group] || [];
+      groups[group].push(link);
     }
     return Object.entries(groups).map((entry) => entry[1]);
   }

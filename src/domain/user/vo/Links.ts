@@ -15,7 +15,7 @@ export class Links extends BaseValueObject {
   }
 
   removeLinks(links: Link[]): Links {
-    return new Links(this.links.filter((link) => this.includes(links, link)));
+    return new Links(this.links.filter((link) => !this.includes(links, link)));
   }
 
   private includes(links: Link[], link: Link) {

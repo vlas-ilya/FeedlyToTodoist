@@ -24,4 +24,11 @@ export class Link extends BaseValueObject {
       (value, index) => new Link(value[0], date, `${index}_${group}`),
     );
   }
+
+  public groupName() {
+    const groupMatches = this.group.match(/\d+_(.*)/);
+    return groupMatches && groupMatches.length === 2
+      ? groupMatches[1]
+      : this.group;
+  }
 }
