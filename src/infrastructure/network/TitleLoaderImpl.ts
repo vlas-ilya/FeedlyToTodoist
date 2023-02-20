@@ -1,5 +1,8 @@
 import { TitleLoader } from '../../infrastructure-interfaces/network/TitleLoader';
 import { Fetch } from '../../utils/fetch';
+import { ifNotEmpty } from '../../utils/strings/ifNotEmpty';
+
+const DEFAULT_TITLE_VALUE = 'Не удалось загрузить заголовок';
 
 export class TitleLoaderImpl implements TitleLoader {
   constructor(private readonly fetch: Fetch) {}
@@ -7,9 +10,9 @@ export class TitleLoaderImpl implements TitleLoader {
   async loadTitle(url: string) {
     try {
       const text = await this.fetch(url).get({});
-      return this.parseTitle(text.data);
+      return ifNotEmpty(this.parseTitle(text.data), DEFAULT_TITLE_VALUE);
     } catch {
-      return "Не удалось загрузить заголовок";
+      return DEFAULT_TITLE_VALUE;
     }
   }
 
