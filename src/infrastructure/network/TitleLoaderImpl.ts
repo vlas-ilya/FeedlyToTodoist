@@ -5,8 +5,12 @@ export class TitleLoaderImpl implements TitleLoader {
   constructor(private readonly fetch: Fetch) {}
 
   async loadTitle(url: string) {
-    const text = await this.fetch(url).get({});
-    return this.parseTitle(text.data);
+    try {
+      const text = await this.fetch(url).get({});
+      return this.parseTitle(text.data);
+    } catch {
+      return "Не удалось загрузить заголовок";
+    }
   }
 
   private parseTitle(text: string): string {
