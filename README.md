@@ -1,5 +1,14 @@
-# automation_feedly_todoist
+# Feedly to todoist
 
-Update feedly dev token here: https://feedly.com/v3/auth/dev
+Утилита позволяющая из заметок в feedly и из ссылок отправленных в телеграмм бот https://t.me/FeedlyToTodoistBot сформировать план прочтения в виде задач в Todoist
 
-planned update 27.12.2021
+# Запуск своей копии сервиса
+
+Для запуска своей копии сервиса, необходимо создать телеграмм бот и добавить токен в корень приложения в файл .env
+
+```
+telegramApiToken = <token>
+```
+
+Далее необходимо собрать проект командой `npm run build` и запустить `dist/index.js`
+
