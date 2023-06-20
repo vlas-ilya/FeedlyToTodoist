@@ -4,6 +4,7 @@ import { IdProvider } from '../../utils/providers/IdProvider';
 import { DateProvider } from '../../utils/providers/DateProvider';
 import { AddTaskArgs } from '@doist/todoist-api-typescript/dist/types/requests';
 import { TodoistApiProvider } from '../../utils/providers/TodoistApiProvider';
+import { DEFAULT_TITLE_VALUE } from './TitleLoaderImpl';
 
 export class TodoistClientImpl implements TodoistClient {
   constructor(
@@ -32,7 +33,9 @@ export class TodoistClientImpl implements TodoistClient {
     const task = {
       project_id: todoistProjectId,
       due_date: article.date,
-      content: `[${article.title}](${article.url})`,
+      content: article.title !== DEFAULT_TITLE_VALUE
+        ? `[${article.title}](${article.url})`
+        : article.url,
     } as AddTaskArgs;
     await todoistApi.addTask(task, this.idProvider.generate());
   }

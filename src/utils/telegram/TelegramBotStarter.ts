@@ -54,12 +54,12 @@ async function createBot() {
             try {
               const promise = controller[method].bind(context)(ctx);
               if (promise instanceof Promise) {
-                promise.catch(e => {
-                  console.log("onStart", ctx, e);
+                promise.catch((e) => {
+                  console.log('onStart', ctx, e);
                 });
               }
             } catch (e) {
-              console.log("onStart", ctx, e);
+              console.log('onStart', ctx, e);
             }
           }
         });
@@ -77,12 +77,12 @@ async function createBot() {
             try {
               const promise = controller[method].bind(context)(ctx);
               if (promise instanceof Promise) {
-                promise.catch(e => {
-                  console.log("onStart", ctx, e);
+                promise.catch((e) => {
+                  console.log('onStart', ctx, e);
                 });
               }
             } catch (e) {
-              console.log("onStart", ctx, e);
+              console.log('onStart', ctx, e);
             }
           }
         });
@@ -104,12 +104,12 @@ async function createBot() {
               try {
                 const promise = controller[method].bind(context)(ctx);
                 if (promise instanceof Promise) {
-                  promise.catch(e => {
-                    console.log("onStart", ctx, e);
+                  promise.catch((e) => {
+                    console.log('onStart', ctx, e);
                   });
                 }
               } catch (e) {
-                console.log("onStart", ctx, e);
+                console.log('onStart', ctx, e);
               }
             }
           });
@@ -127,12 +127,12 @@ async function createBot() {
             try {
               const promise = controller[command.method].bind(context)(ctx);
               if (promise instanceof Promise) {
-                promise.catch(e => {
-                  console.log("onStart", ctx, e);
+                promise.catch((e) => {
+                  console.log('onStart', ctx, e);
                 });
               }
             } catch (e) {
-              console.log("onStart", ctx, e);
+              console.log('onStart', ctx, e);
             }
           }
         });

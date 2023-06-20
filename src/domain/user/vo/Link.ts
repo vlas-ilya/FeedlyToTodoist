@@ -5,9 +5,9 @@ import { IdProvider } from '../../../utils/providers/IdProvider';
 
 export class Link extends BaseValueObject {
   public static readonly extractLinksRegex =
-    /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g;
+    /https?:\/\/(www\.)?[-a-zA-Z0-9ЁёА-я@:%._\+~#=]{1,256}\.[a-zA-Z0-9ЁёА-я()]{1,6}\b([-a-zA-Z0-9ЁёА-я()@:%_\+.~#?&//=]*)/g;
   public static readonly checkLinkRegex =
-    /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;
+    /^https?:\/\/(www\.)?[-a-zA-Z0-9ЁёА-я@:%._\+~#=]{1,256}\.[a-zA-Z0-9ЁёА-я()]{1,6}\b([-a-zA-Z0-9ЁёА-я()@:%_\+.~#?&//=]*)$/;
 
   constructor(public readonly value: string, public readonly date: Date, public readonly group: string) {
     super();
@@ -27,8 +27,6 @@ export class Link extends BaseValueObject {
 
   public groupName() {
     const groupMatches = this.group.match(/\d+_(.*)/);
-    return groupMatches && groupMatches.length === 2
-      ? groupMatches[1]
-      : this.group;
+    return groupMatches && groupMatches.length === 2 ? groupMatches[1] : this.group;
   }
 }
