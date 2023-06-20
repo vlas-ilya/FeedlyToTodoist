@@ -20,7 +20,7 @@ export class FeedlyClientImpl implements FeedlyClient {
       (item: any) =>
         ({
           id: item['id'],
-          url: item['originId'],
+          url: item['canonicalUrl'],
           title: item['title'],
         } as Article),
     );

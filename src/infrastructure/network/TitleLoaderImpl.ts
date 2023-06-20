@@ -9,12 +9,31 @@ export class TitleLoaderImpl implements TitleLoader {
 
   async loadTitle(url: string) {
     try {
-      const text = this.fetch(url).getByHttpie();
+      const text = await this.tryGetContent(url);
       const title = this.parseTitle(text);
       return ifNotEmpty(title, DEFAULT_TITLE_VALUE);
     } catch (e) {
       console.log('loadTitle error: ', e);
       return DEFAULT_TITLE_VALUE;
+    }
+  }
+
+  async tryGetContent(url: string): Promise<string> {
+    try {
+      const { data } = await this.fetch(url).get({});
+      return data;
+    } catch (e) {
+      console.log(`tryGetContent this.fetch("${url}").get({}) error: `, e);
+      try {
+        const titleByHttpie = this.fetch(url).getByHttpie();
+        if (titleByHttpie === '405 Not Allowed') {
+          throw '405 Not Allowed';
+        }
+        return titleByHttpie;
+      } catch (e) {
+        console.log(`tryGetContent this.fetch("${url}").getByHttpie() error: `, e);
+        throw e;
+      }
     }
   }
 
