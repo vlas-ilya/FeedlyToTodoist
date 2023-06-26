@@ -42,6 +42,9 @@ export class WeekSchedule {
     for (const link of group) {
       if (this._schedule[position].length >= this.countOnDay) {
         position += 1;
+        if (position >= 7) {
+          return;
+        }
         continue;
       }
       this._schedule[position].push(await this.converter(link));
