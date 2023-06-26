@@ -55,8 +55,9 @@ export class NotesTransferServiceImpl implements NotesTransferService {
   }
 
   private handleError(e: any, userId: string): never {
-    console.log(`[handleError(e, ${userId})] e.message = ${e.message}`);
-    console.log(`[handleError(e, ${userId})] e.config.url = ${e.config.url}`);
+    console.error(`[handleError(e, ${userId})] e = ${e}`);
+    console.error(`[handleError(e, ${userId})] e.message = ${e.message}`);
+    console.error(`[handleError(e, ${userId})] e.config.url = ${e.config.url}`);
     if (e.message == 'Request failed with status code 401' && e.config.url.startsWith('https://cloud.feedly.com/')) {
       throw new IncorrectFeedlyCredentialsError(userId);
     }
