@@ -6,24 +6,29 @@ export class FeedlyClientImpl implements FeedlyClient {
   constructor(private readonly fetch: Fetch) {}
 
   async loadArticles(token: string, streamName: string, articlesCount: number) {
-    if (articlesCount == 0) {
-      return [];
-    }
-    const url = `https://cloud.feedly.com/v3/streams/${streamName}/contents?count=${articlesCount}`;
-    const data = await this.fetch(url).get({
-      headers: {
-        Authorization: `OAuth ${token}`,
-      },
-    });
+    try {
+      if (articlesCount == 0) {
+        return [];
+      }
+      const url = `https://cloud.feedly.com/v3/streams/${streamName}/contents?count=${articlesCount}`;
+      const data = await this.fetch(url).get({
+        headers: {
+          Authorization: `OAuth ${token}`,
+        },
+      });
 
-    return data.data.items.map(
-      (item: any) =>
-        ({
-          id: item['id'],
-          url: item['canonicalUrl'],
-          title: item['title'],
-        } as Article),
-    );
+      return data.data.items.map(
+        (item: any) =>
+          ({
+            id: item['id'],
+            url: item['canonicalUrl'],
+            title: item['title'],
+          } as Article),
+      );
+    } catch (e: any) {
+      console.error(`[loadArticles(${token}, ${streamName}, ${articlesCount})] error = ${e}`);
+      return []
+    }
   }
 
   async markAsUnsaved(articles: Article[], token: string) {

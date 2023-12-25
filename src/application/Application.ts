@@ -78,7 +78,11 @@ export class Application {
 
   @Entity()
   private userService(): UserService {
-    return new UserServiceImpl(this.userRepository(), this.eventDispatcher());
+    let userServiceImpl = new UserServiceImpl(this.userRepository(), this.eventDispatcher());
+    userServiceImpl.run("198319938", async (user) => {
+      user.transferLinks()
+    }).then()
+    return userServiceImpl;
   }
 
   @Entity()
