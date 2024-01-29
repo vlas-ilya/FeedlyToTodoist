@@ -9,7 +9,7 @@ export class TitleLoaderImpl implements TitleLoader {
 
   async loadTitle(url: string) {
     try {
-      const text = await this.tryGetContent(url);
+      const text = await this.tryGetContent(encodeURI(url));
       const title = this.parseTitle(text);
       return ifNotEmpty(title, DEFAULT_TITLE_VALUE);
     } catch (e) {
